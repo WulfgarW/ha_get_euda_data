@@ -4,7 +4,7 @@ This integration for Home Assistant will fetch data from the EU Data Act servers
 The scan_interval is how often the integration should fetch data from the servers, if there's no new data from the car then entities won't be updated.
 
 ### Supported setups
-This integration will only work for your car if you have done the necessary preparation steps.
+This integration will only work for your car if you have done the necessary preparation steps (see SetupEUDA_Request.md).
 
 ## Installation
 

@@ -400,6 +400,14 @@ EUDA_DATA_DICT = {
         "key": "60bc0937-f5a7-3809-9535-9a7942e5dd94",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
+    "locked": {
+        "attr": "doors_all_locked",
+        "name": "Doors all locked",
+        #"icon": "mdi:car",
+        "device_class": "lock",
+        "key": "bd917b58-82bd-3c34-a006-747ca5aec03d",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
     "open_state_front_left_door": {
         "attr": "door_closed_left_front",
         "name": "Door closed left front",
@@ -662,14 +670,6 @@ EUDA_DATA_DICT = {
         "key": "00000000-0000-0000-0000-0000", 
         "conversion": None, 
     }, 
-    "daily_sum_start_mileage": {
-        "attr": "daily_sum_start_mileage",
-        "name": "Latest daily sum start milage",
-        "icon": "mdi:map-marker-distance",
-        "unit": "km",
-        "device_class": "distance",
-        "key": "10000000-0000-0000-0000-0000",
-    },
     "daily_sum_average_fuel_consumption": {
         "attr": "daily_sum_average_fuel_consumption",
         "name": "Latest daily sum average fuel consumption",
@@ -710,6 +710,14 @@ EUDA_DATA_DICT = {
         "device_class": "distance",
         "key": "10000000-0000-0000-0000-0005",
     },
+    "monthly_sum_average_fuel_consumption": {
+        "attr": "monthly_sum_average_fuel_consumption",
+        "name": "Latest monthly sum average fuel consumption",
+        "icon": "mdi:fuel",
+        "unit": "l/100km",
+        #"device_class": "energy_distance",
+        "key": "11000000-0000-0000-0000-0001",
+    },
     "monthly_sum_average_electr_engine_consumption": {
         "attr": "monthly_sum_average_electric_consumption",
         "name": "Latest monthly sum average electric consumption",
@@ -717,6 +725,30 @@ EUDA_DATA_DICT = {
         "unit": "kWh/100km",
         "device_class": "energy_distance",
         "key": "11000000-0000-0000-0000-0002",
+    },
+    "monthly_sum_average_gas_consumption": {
+        "attr": "monthly_sum_average_gas_consumption",
+        "name": "Latest monthly sum average gas consumption",
+        "icon": "mdi:storage-tank",
+        "unit": "kg/100km",
+        #"device_class": "energy_distance",
+        "key": "11000000-0000-0000-0000-0003",
+    },
+    "monthly_sum_travel_time": {
+        "attr": "monthly_sum_duration",
+        "name": "Latest monthly sum duration",
+        "icon": "mdi:clock",
+        "unit": "min",
+        "device_class": "duration",
+        "key": "11000000-0000-0000-0000-0004",
+    },
+    "monthly_sum_mileage": {
+        "attr": "monthly_sum_distance",
+        "name": "Latest monthly sum length",
+        "icon": "mdi:map-marker-distance",
+        "unit": "km",
+        "device_class": "distance",
+        "key": "11000000-0000-0000-0000-0005",
     },
 
 }

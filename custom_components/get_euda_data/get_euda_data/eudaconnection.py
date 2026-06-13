@@ -1234,6 +1234,8 @@ class EUDAConnection:
             # Copy tripData for each vehicle in the vehicle itself
             for vehicle in self.vehicles:
                 vehicle.tripData = self.tripData.get(vehicle.vin, {})
+                vehicle.calcLatestTripSumValues(sumType="day")
+                vehicle.calcLatestTripSumValues(sumType="month")
 
             # Move processed files from 'in_process' folder to 'processed' folder
             loop = asyncio.get_running_loop()

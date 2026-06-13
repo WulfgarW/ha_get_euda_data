@@ -39,6 +39,8 @@ class EUDAVehicle:
         self._states = {}
         self.currentData = {}
         self.tripData = {}
+        self._tripSumDictDay = {}
+        self._tripSumDictMonth = {}
         self._defined_EUDA_keys = set()
         for elem in EUDA_DATA_DICT.values():
             if elem.get("key","") != "":
@@ -183,9 +185,22 @@ class EUDAVehicle:
                     undefinedFields[element.get("key", "-dataFieldNameMissing-")] = element.get("value", "")
         return dict(sorted(undefinedFields.items()))
 
-    def calcLatestTripSumValues(self, sumType="day") -> str:
+    def getLatestTripSumValues(self, sumType="day") -> str:
         """Return the calculated latest daily sum values from the trip history."""
-        if True: #try:
+        if sumType == "month":
+            if self._tripSumDictMonth == {}:
+                self._LOGGER.warning(f"tripSumDictMonth is empty when getLatestTripSumValues is called. Recalculating.")
+                self.calcLatestTripSumValues(sumType=sumType)
+            return self._tripSumDictMonth
+        else:
+            if self._tripSumDictDay == {}:
+                self._LOGGER.warning(f"tripSumDictDay is empty when getLatestTripSumValues is called. Recalculating.")
+                self.calcLatestTripSumValues(sumType=sumType)
+            return self._tripSumDictDay
+
+    def calcLatestTripSumValues(self, sumType="day"):
+        """Calculate the latest daily sum values from the trip history."""
+        try:
             sumDict = {
                 "startMileage": 1000000,
                 "fuelConsumption": 0,
@@ -193,33 +208,38 @@ class EUDAVehicle:
                 "gasConsumption": 0,
                 "travelTime": 0,
                 "distance": 0,
+                "tripEnd": datetime.min,
             }
-            element = self.tripData[list(self.tripData)[-1]]
-            # Set the minTimeStamp
-            latestTripEnd = element.get("tripEnd", datetime.min)
-            if sumType == "month":
-                latestTripEnd = latestTripEnd.replace(day=1)
-            minTimeStamp = datetime.combine(latestTripEnd.date(), datetime.min.time()).astimezone(None)
-            sumDict["tripEnd"] = minTimeStamp
+            if self.tripData != {}:
+                element = self.tripData[list(self.tripData)[-1]]
+                # Set the minTimeStamp
+                latestTripEnd = element.get("tripEnd", datetime.min)
+                if sumType == "month":
+                    latestTripEnd = latestTripEnd.replace(day=1)
+                minTimeStamp = datetime.combine(latestTripEnd.date(), datetime.min.time()).astimezone(None)
+                sumDict["tripEnd"] = minTimeStamp
 
-            for element in self.tripData.values():
-                if minTimeStamp <= element.get("tripEnd", ""):
-                    if element.get("startMileage", 1000000) < sumDict["startMileage"]:
-                        sumDict["startMileage"] = element.get("startMileage", 1000000)
-                    sumDict["travelTime"] = sumDict["travelTime"] + element.get("travelTime", 0)
-                    sumDict["distance"] = sumDict["distance"] + element.get("distance", 0)
-                    sumDict["fuelConsumption"] = sumDict["fuelConsumption"] + element.get("fuelConsumption", 0) * element.get("distance", 0)
-                    sumDict["electricConsumption"] = sumDict["electricConsumption"] + element.get("electricConsumption", 0) * element.get("distance", 0)
-                    sumDict["gasConsumption"] = sumDict["gasConsumption"] + element.get("gasConsumption", 0) * element.get("distance", 0)
+                for element in self.tripData.values():
+                    if minTimeStamp <= element.get("tripEnd", ""):
+                        if element.get("startMileage", 1000000) < sumDict["startMileage"]:
+                            sumDict["startMileage"] = element.get("startMileage", 1000000)
+                        sumDict["travelTime"] = sumDict["travelTime"] + element.get("travelTime", 0)
+                        sumDict["distance"] = sumDict["distance"] + element.get("distance", 0)
+                        sumDict["fuelConsumption"] = sumDict["fuelConsumption"] + element.get("fuelConsumption", 0) * element.get("distance", 0)
+                        sumDict["electricConsumption"] = sumDict["electricConsumption"] + element.get("electricConsumption", 0) * element.get("distance", 0)
+                        sumDict["gasConsumption"] = sumDict["gasConsumption"] + element.get("gasConsumption", 0) * element.get("distance", 0)
             
-            if sumDict["distance"]>0:
-                sumDict["fuelConsumption"] = int(sumDict["fuelConsumption"] / sumDict["distance"] +0.5)
-                sumDict["electricConsumption"] = int(sumDict["electricConsumption"] / sumDict["distance"] +0.5)
-                sumDict["gasConsumption"] = int(sumDict["gasConsumption"] / sumDict["distance"] +0.5)
-            return sumDict
-        #except Exception as error:
-        #    self._LOGGER.warning(f"Failed to calculate latest trip sum values  - {error}")
-        return sumDict
+                if sumDict["distance"]>0:
+                    sumDict["fuelConsumption"] = int(sumDict["fuelConsumption"] / sumDict["distance"] +0.5)
+                    sumDict["electricConsumption"] = int(sumDict["electricConsumption"] / sumDict["distance"] +0.5)
+                    sumDict["gasConsumption"] = int(sumDict["gasConsumption"] / sumDict["distance"] +0.5)
+
+            if sumType == "month":
+                self._tripSumDictMonth = sumDict
+            else:
+                self._tripSumDictDay = sumDict
+        except Exception as error:
+            self._LOGGER.warning(f"Failed to calculate latest trip sum values  - {error}")
 
 
 def GetModelFromNickName(nickName: str) -> str:

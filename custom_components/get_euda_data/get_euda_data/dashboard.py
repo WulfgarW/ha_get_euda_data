@@ -73,9 +73,9 @@ class EUDAInstrument:
             return len(attrs)
         if self.key.startswith("10000000-0000") or self.key.startswith("11000000-0000"):
             if self.key.startswith("10000000-0000"):
-                tripSum = self.vehicle.calcLatestTripSumValues("day")
+                tripSum = self.vehicle.getLatestTripSumValues("day")
             else:
-                tripSum = self.vehicle.calcLatestTripSumValues("month")
+                tripSum = self.vehicle.getLatestTripSumValues("month")
             if self.key.endswith("0000"):
                 return tripSum.get("startMileage", 0)
             if self.key.endswith("0001"):
@@ -101,7 +101,10 @@ class EUDAInstrument:
     @property
     def attributes(self):
         attrs = {}
-        if self.key != "00000000-0000-0000-0000-0000":
+        if (self.key != "00000000-0000-0000-0000-0000" and 
+            not self.key.startswith("10000000-0000") and 
+            not self.key.startswith("11000000-0000")    
+            ):
             attrs["EUDA field key"] = self.key
         if self.name.startswith("Last long length"):
             if self.vehicle.isEUDADataFieldSupported(EUDA_LONG_TERM_DATA_START_MILEAGE_KEY):
@@ -111,6 +114,14 @@ class EUDAInstrument:
             if self.vehicle.isEUDADataFieldSupported(EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY):
                 attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT)
                 return attrs
+        if self.key == "10000000-0000-0000-0000-0005":
+            tripSum = self.vehicle.getLatestTripSumValues("day")
+            attrs["start mileage"] = tripSum.get("startMileage", 0)
+            return attrs
+        if self.key == "11000000-0000-0000-0000-0005":
+            tripSum = self.vehicle.getLatestTripSumValues("month")
+            attrs["start mileage"] = tripSum.get("startMileage", 0)
+            return attrs
         if self.name.startswith("Other fields found"):
             attrs = self.vehicle.getEUDADataAllUndefinedFields()
             return attrs
@@ -125,7 +136,7 @@ class EUDAInstrument:
         try:
             if self.key == "00000000-0000-0000-0000-0000":
                 return True
-            if self.key.startswith("10000000-0000") or self.key.startswith("11000000-0000"):
+            if (self.key.startswith("10000000-0000") or self.key.startswith("11000000-0000")) and self.vehicle.tripData != {}:
                 return True
             return self.vehicle.isEUDADataFieldSupported(self.key)
         except Exception as error:
