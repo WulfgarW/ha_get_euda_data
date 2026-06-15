@@ -162,7 +162,7 @@ EUDA_DATA_DICT = {
         "attr": "boardnet_battery_voltage",
         "name": "Boardnet battery voltage",
         "icon": "mdi:battery",
-        "unit": "%",
+        "unit": "V",
         "device_class": "battery",
         "key": "c5b624db-6a07-3957-9127-98cee0be6c98",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
