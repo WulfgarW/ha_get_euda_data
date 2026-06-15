@@ -663,6 +663,15 @@ EUDA_DATA_DICT = {
         "key": "cf28f7d9-6201-30b8-82e5-a461968d30dc",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
+    "battery_state_report.remaining_charging_time_complete": {
+        "attr": "charging_time_remaining",
+        "name": "Charging time remaining",
+        "icon": "mdi:battery-charging-100",
+        "unit": "min",
+        "device_class": "duration",
+        "key": "7405c11f-4d20-36d2-8381-18364aa1f444",
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
     "other_fields_found": { 
         "attr": "other_fields_found", 
         "name": "Other fields found", 

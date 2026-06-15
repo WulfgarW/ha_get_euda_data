@@ -113,6 +113,22 @@ class EUDAVehicle:
                     elif conversion == EUDA_DATA_CONVERSION_FLOAT:
                         return float(element.get("value", "0"))
                     elif conversion == EUDA_DATA_CONVERSION_INT:
+                        if key == "cf28f7d9-6201-30b8-82e5-a461968d30dc" and int(element.get("value", "0")) == 65535:
+                            return -1
+                        if key == "7405c11f-4d20-36d2-8381-18364aa1f444": # value of battery_state_report.remaining_charging_time_complete comes with a unit
+                            value = element.get("value", "0s")
+                            try:
+                                if value.find("s") > 0:
+                                    return int(int(value[0:value.find("s")])/60)
+                                elif value.find("min") > 0:
+                                    return int(value[0:value.find("min")])
+                                else:
+                                    return int(value)
+                            except:
+                                self._LOGGER.warning(
+                                    f"Failed to extract numerical value from value {value} for key {key}."
+                                    )
+                            return -1
                         return int(element.get("value", "0"))
                     elif conversion == EUDA_DATA_CONVERSION_INT_INVERT:
                         return -int(element.get("value", "0"))
