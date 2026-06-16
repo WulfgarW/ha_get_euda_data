@@ -441,6 +441,22 @@ EUDA_DATA_DICT = {
         "key": "60c81e02-4825-3aab-8da8-b8b07f251623",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
+    "open_state_front_engine_bonnet": {
+        "attr": "hood_closed",
+        "name": "Hood closed",
+        "icon": "mdi:car-door",
+        "device_class": "door",
+        "key": "e1c6d420-b439-3de6-a5b7-d0b474cc2752",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "open_state_tailgate": {
+        "attr": "trunk_closed",
+        "name": "Trunk closed",
+        "icon": "mdi:car-door",
+        "device_class": "door",
+        "key": "dbb8f3b1-2bc9-3afc-a1d5-61f1eb04d1c4",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
      "state_rear_right_door_window_lifter": {
         "attr": "window_closed_right_back",
         "name": "Window closed right back",
@@ -472,6 +488,15 @@ EUDA_DATA_DICT = {
         "device_class": "window",
         "key": "60a4f436-5534-32f4-b4cc-b5a88a9d4b91",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "state_sunroof_motor_hood_1": {
+        "attr": "sunroof_closed",
+        "name": "sunroof_closed",
+        #"icon": "mdi:car-door",
+        "device_class": "window",
+        "key": "cff28415-8084-34e0-ad91-db191e5ff3b6",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "reverse_state": True,
     },
    "charging_state": {
         "attr": "charging_state",
