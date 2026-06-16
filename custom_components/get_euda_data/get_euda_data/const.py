@@ -491,7 +491,7 @@ EUDA_DATA_DICT = {
     },
     "state_sunroof_motor_hood_1": {
         "attr": "sunroof_closed",
-        "name": "sunroof_closed",
+        "name": "sunroof closed",
         #"icon": "mdi:car-door",
         "device_class": "window",
         "key": "cff28415-8084-34e0-ad91-db191e5ff3b6",
