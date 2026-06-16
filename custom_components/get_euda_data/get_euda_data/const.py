@@ -759,7 +759,15 @@ EUDA_DATA_DICT = {
         "device_class": "distance",
         "key": "11000000-0000-0000-0000-0005",
     },
-
+    "scr_range": {
+        "attr": "adblue_range",
+        "name": "Adblue range",
+        "icon": "mdi:fuel",
+        "unit": "km",
+        "device_class": "distance",
+        "key": "b43ff74c-2505-3a38-bf98-78c817fbaf96",
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
 }
 
 EUDA_DATA_NO_SHOW_SET = (
