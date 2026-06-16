@@ -115,7 +115,7 @@ class EUDAVehicle:
                     elif conversion == EUDA_DATA_CONVERSION_INT:
                         if key == "cf28f7d9-6201-30b8-82e5-a461968d30dc" and int(element.get("value", "0")) == 65535:
                             return -1
-                        if key == "7405c11f-4d20-36d2-8381-18364aa1f444": # value of battery_state_report.remaining_charging_time_complete comes with a unit
+                        elif key == "7405c11f-4d20-36d2-8381-18364aa1f444": # value of battery_state_report.remaining_charging_time_complete comes with a unit
                             value = element.get("value", "0s")
                             try:
                                 if value.find("s") > 0:
@@ -129,25 +129,31 @@ class EUDAVehicle:
                                     f"Failed to extract numerical value from value {value} for key {key}."
                                     )
                             return -1
+                        elif element.get("value", "0") == "":
+                            return 0
                         return int(element.get("value", "0"))
                     elif conversion == EUDA_DATA_CONVERSION_INT_INVERT:
                         return -int(element.get("value", "0"))
                     elif conversion == EUDA_DATA_CONVERSION_BOOL:
                         if element.get("value", "") == "true":
                             return True
-                        if element.get("value", "") == "on":
+                        elif element.get("value", "") == "on":
                             return True
-                        if element.get("value", "") == "locked":
+                        elif element.get("value", "") == "locked":
                             return True
-                        if element.get("value", "") == "connected":
+                        elif element.get("value", "") == "connected":
                             return True
-                        if element.get("value", "") == "charging":
+                        elif element.get("value", "") == "charging":
                             return True
-                        if element.get("value", "") == "1" and element.get("dataFieldName", "").startswith("parking_brake"):
+                        elif element.get("value", "") == "1" and element.get("dataFieldName", "").startswith("parking_brake"):
                             return True
-                        if element.get("value", "") == "3" and element.get("dataFieldName", "").startswith("open_state"):
+                        elif element.get("value", "") == "3" and element.get("dataFieldName", "").startswith("open_state"):
                             return True
-                        if element.get("value", "") == "3" and "window_lifter" in element.get("dataFieldName", ""):
+                        elif element.get("value", "") == "3" and element.get("dataFieldName", "").startswith("state_sunroof"):
+                            return True
+                        elif element.get("value", "") in ("3", "4", "5") and element.get("dataFieldName", "").startswith("parking_lights"):
+                            return True
+                        elif element.get("value", "") == "3" and "window_lifter" in element.get("dataFieldName", ""):
                             return True
                     elif conversion == EUDA_DATA_CONVERSION_DIVIDE_BY_10:
                         return int(element.get("value", "0")) / 10
