@@ -163,7 +163,7 @@ EUDA_DATA_DICT = {
         "name": "Boardnet battery voltage",
         "icon": "mdi:battery",
         "unit": "V",
-        "device_class": "battery",
+        "device_class": "voltage",
         "key": "c5b624db-6a07-3957-9127-98cee0be6c98",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -547,6 +547,13 @@ EUDA_DATA_DICT = {
         "name": "Charge rate unit",
         "icon": "mdi:flash",
         "key": "9c83ccaa-5288-38da-9d38-81ef8db469b3",
+        "conversion": None,
+    },
+    "settings.max_charge_current_ac": {
+        "attr": "max_charge_current_ac",
+        "name": "Max charge current AC",
+        "icon": "mdi:flash",
+        "key": "0387de65-ce87-3750-b9d7-906687095200",
         "conversion": None,
     },
    "plug_state": {

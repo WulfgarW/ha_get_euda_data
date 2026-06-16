@@ -66,7 +66,7 @@ version_info >= (3, 0) or exit("Python 3 required")
 
 _LOGGER = logging.getLogger(__name__)
 BRAND_CUPRA = "cupra"
-TIMEOUT = timedelta(seconds=90)
+TIMEOUT = timedelta(seconds=30)
 loginInProgress = False
 
 
@@ -1677,7 +1677,7 @@ class EUDAConnection:
             # Reading information for data cluster 'partial'
             identifier_partial = ""
             counter = 0
-            while counter <5 and identifier_partial == "":
+            while counter <3 and identifier_partial == "":
                 if counter>0:
                     await asyncio.sleep(2)
                     self._LOGGER.debug(f"Trying to read information about data cluster of type 'partial' again.")
@@ -1702,7 +1702,7 @@ class EUDAConnection:
 
             counter = 0
             fileList = {}
-            while counter <5 and fileList.get("availableDataFiles", []) == []:
+            while counter <3 and fileList.get("availableDataFiles", []) == []:
                 if counter>0:
                     await asyncio.sleep(2)
                     self._LOGGER.debug(f"Trying to read list of available files again.")
