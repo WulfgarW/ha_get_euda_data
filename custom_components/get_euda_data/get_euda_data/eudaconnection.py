@@ -1150,7 +1150,7 @@ class EUDAConnection:
             return True
         except Exception as e:
             self._LOGGER.warning(f'readZipFile() not successful. Error: {e}')
-            return None, ''
+            return False
 
     async def archiveFiles(self) -> bool:
         """Archive EUDA files older than 10 days in the archive folder"""
@@ -1646,7 +1646,7 @@ class EUDAConnection:
                     )
                 )
             else:
-                self._LOGGER.debug(f"In getData. Number of vehicles is zero.")
+                self._LOGGER.debug("In getData. Number of vehicles is zero.")
 
             for vehicle in self.vehicles:
                 await self.getDataForOneVehicle(vehicle)
@@ -1680,7 +1680,7 @@ class EUDAConnection:
             while counter <3 and identifier_partial == "":
                 if counter>0:
                     await asyncio.sleep(2)
-                    self._LOGGER.debug(f"Trying to read information about data cluster of type 'partial' again.")
+                    self._LOGGER.debug("Trying to read information about data cluster of type 'partial' again.")
                 data = await self.getDatacluster(EUDA_BASE_URL, vehicle.vin, "partial")
                 if data == {}:
                     self._LOGGER.error("No data cluster of type 'partial' found.")
@@ -1701,11 +1701,11 @@ class EUDAConnection:
                 return False
 
             counter = 0
-            fileList = {}
+            fileList: dict = {}
             while counter <3 and fileList.get("availableDataFiles", []) == []:
                 if counter>0:
                     await asyncio.sleep(2)
-                    self._LOGGER.debug(f"Trying to read list of available files again.")
+                    self._LOGGER.debug("Trying to read list of available files again.")
                 fileList = await self.getListOfAvailableFiles(
                     EUDA_BASE_URL, vehicle.vin, identifier_partial, "partial"
                 )

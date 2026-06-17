@@ -4,6 +4,7 @@
 # Extract information from data files downloaded from the EU Data Act portal of Volkswagen group.
 import logging
 from datetime import datetime
+from typing import Any
 
 from .const import (
     EUDA_DATA_CONVERSION_FLOAT,
@@ -103,7 +104,7 @@ class EUDAVehicle:
         """Return model year"""
         return "unknown"
 
-    def getEUDADataFieldValue(self, key=None, conversion=None) -> any:
+    def getEUDADataFieldValue(self, key=None, conversion=None) -> Any:
         """Return value of an EUDA data field identified by key."""
         if key == "00000000-0000-0000-0000-0000":
             attrs = self.getEUDADataAllUndefinedFields
@@ -137,7 +138,7 @@ class EUDAVehicle:
         for element in self.currentData.get("Data", []):
             if element.get("key", "") == key:
                 if "value" in element:
-                    if conversion == None:
+                    if conversion is None:
                         return element.get("value", "")
                     elif conversion == EUDA_DATA_CONVERSION_FLOAT:
                         return float(element.get("value", "0"))
@@ -153,9 +154,9 @@ class EUDAVehicle:
                                     return int(value[0:value.find("min")])
                                 else:
                                     return int(value)
-                            except:
+                            except Exception as e:
                                 self._LOGGER.warning(
-                                    f"Failed to extract numerical value from value {value} for key {key}."
+                                    f"Failed to extract numerical value from value {value} for key {key}. Error {e}"
                                     )
                             return -1
                         elif element.get("value", "0") == "":
@@ -250,16 +251,16 @@ class EUDAVehicle:
                     undefinedFields[element.get("key", "-dataFieldNameMissing-")] = element.get("value", "")
         return dict(sorted(undefinedFields.items()))
 
-    def getLatestTripSumValues(self, sumType="day") -> str:
+    def getLatestTripSumValues(self, sumType="day") -> dict:
         """Return the calculated latest daily sum values from the trip history."""
         if sumType == "month":
             if self._tripSumDictMonth == {}:
-                self._LOGGER.warning(f"tripSumDictMonth is empty when getLatestTripSumValues is called. Recalculating.")
+                self._LOGGER.warning("tripSumDictMonth is empty when getLatestTripSumValues is called. Recalculating.")
                 self.calcLatestTripSumValues(sumType=sumType)
             return self._tripSumDictMonth
         else:
             if self._tripSumDictDay == {}:
-                self._LOGGER.warning(f"tripSumDictDay is empty when getLatestTripSumValues is called. Recalculating.")
+                self._LOGGER.warning("tripSumDictDay is empty when getLatestTripSumValues is called. Recalculating.")
                 self.calcLatestTripSumValues(sumType=sumType)
             return self._tripSumDictDay
 

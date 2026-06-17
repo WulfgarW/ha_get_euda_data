@@ -2,16 +2,13 @@
 # Thanks to molobrakos and Farfar
 
 import logging
-from datetime import datetime
-from .utilities import camel2slug, convertTimerUtcToLocal
+from .utilities import camel2slug
 from .const import (
     EUDA_DATA_DICT, 
     EUDA_DATA_CONVERSION_INT,
     EUDA_DATA_CONVERSION_BOOL, 
     EUDA_LONG_TERM_DATA_START_MILEAGE_KEY, 
     EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY,
-    EUDA_OUTSIDE_TEMPERATURE_KEY,
-    EUDA_PARKING_BRAKE_KEY,
 )
 
 _LOGGER = logging.getLogger(__name__)
