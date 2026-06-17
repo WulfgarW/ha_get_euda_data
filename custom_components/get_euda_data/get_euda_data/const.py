@@ -453,7 +453,6 @@ EUDA_DATA_DICT = {
     "open_state_tailgate": {
         "attr": "trunk_closed",
         "name": "Trunk closed",
-        "icon": "mdi:door-closed",
         "device_class": "door",
         "key": "dbb8f3b1-2bc9-3afc-a1d5-61f1eb04d1c4",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -461,7 +460,6 @@ EUDA_DATA_DICT = {
     "open_state_front_engine_bonnet": {
         "attr": "hood_closed",
         "name": "Hood closed",
-        "icon": "mdi:dorr-closed",
         "device_class": "door",
         "key": "e1c6d420-b439-3de6-a5b7-d0b474cc2752",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -469,8 +467,7 @@ EUDA_DATA_DICT = {
     "state_sunroof_motor_hood_1": {
         "attr": "sunroof_closed",
         "name": "Sunroof closed",
-        "icon": "mdi:dorr-closed",
-        "device_class": "door",
+        "device_class": "window",
         "key": "cff28415-8084-34e0-ad91-db191e5ff3b6",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
