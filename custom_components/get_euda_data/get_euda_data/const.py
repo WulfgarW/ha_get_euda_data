@@ -461,7 +461,7 @@ EUDA_DATA_DICT = {
     "open_state_front_engine_bonnet": {
         "attr": "hood_closed",
         "name": "Hood closed",
-        "icon": "mdi:dorr-closed",
+        "icon": "mdi:door-closed",
         "device_class": "door",
         "key": "e1c6d420-b439-3de6-a5b7-d0b474cc2752",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -725,6 +725,14 @@ EUDA_DATA_DICT = {
         "name": "Other fields found", 
         "icon": "mdi:help-circle-outline", 
         "key": "00000000-0000-0000-0000-0000", 
+        "conversion": None, 
+    }, 
+    "newest_file_timestamp": { 
+        "attr": "newest_file_timestamp", 
+        "name": "Newest file timestamp", 
+        "icon": "mdi:timeline-clock", 
+        "device_class": "timestamp",
+        "key": "01000000-0000-0000-0000-0000", 
         "conversion": None, 
     }, 
     "daily_sum_average_fuel_consumption": {

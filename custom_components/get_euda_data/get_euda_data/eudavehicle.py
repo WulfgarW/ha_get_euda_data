@@ -105,6 +105,35 @@ class EUDAVehicle:
 
     def getEUDADataFieldValue(self, key=None, conversion=None) -> any:
         """Return value of an EUDA data field identified by key."""
+        if key == "00000000-0000-0000-0000-0000":
+            attrs = self.getEUDADataAllUndefinedFields
+            return len(attrs)
+        elif key == "01000000-0000-0000-0000-0000":
+            return self.getEUDAFileTimestamp
+        elif key.startswith("10000000-0000") or key.startswith("11000000-0000"):
+            if key.startswith("10000000-0000"):
+                tripSum = self.getLatestTripSumValues("day")
+            else:
+                tripSum = self.getLatestTripSumValues("month")
+            if key.endswith("0000"):
+                return tripSum.get("startMileage", 0)
+            elif key.endswith("0001"):
+                return tripSum.get("fuelConsumption", 0)/10
+            elif key.endswith("0002"):
+                return tripSum.get("electricConsumption", 0)/10
+            elif key.endswith("0003"):
+                return tripSum.get("gasConsumption", 0)/10
+            elif key.endswith("0004"):
+                return tripSum.get("travelTime", 0)
+            elif key.endswith("0005"):
+                return tripSum.get("distance", 0)
+            elif key.endswith("0006"):
+                return tripSum.get("tripEnd", 0)
+            else:
+                self._LOGGER.warning(
+                    f"Unknown trip sum value key {key}."
+                )
+                return tripSum
         for element in self.currentData.get("Data", []):
             if element.get("key", "") == key:
                 if "value" in element:
@@ -179,6 +208,12 @@ class EUDAVehicle:
 
     def isEUDADataFieldSupported(self, key=None) -> bool:
         """Return true if the EUDA data field identified by key is supported."""
+        if key == "00000000-0000-0000-0000-0000":
+            return True
+        elif key == "01000000-0000-0000-0000-0000" and self.currentData != {}:
+            return True
+        elif (key.startswith("10000000-0000") or key.startswith("11000000-0000")) and self.tripData != {}:
+            return True
         for element in self.currentData.get("Data", []):
             if (
                 element.get("key", "")
@@ -188,6 +223,13 @@ class EUDAVehicle:
                     return True
         return False
 
+    @property
+    def getEUDAFileTimestamp(self) -> datetime:
+        """Return timestamp form the newest EUDA file (from the filename)."""
+        if self.currentData.get("timeStamp", "") != "":
+                return self.currentData.get("timeStamp", "")
+        return datetime.min
+
     def getEUDADataFieldTimestamp(self, key=None) -> str:
         """Return timestamp for an EUDA data field identified by key."""
         for element in self.currentData.get("Data", []):
@@ -196,6 +238,7 @@ class EUDAVehicle:
                     return element.get("timestampUtc", "unknown")
         return "unknown"
 
+    @property
     def getEUDADataAllUndefinedFields(self) -> dict:
         """Return a dictionary of all EUDA data fields found in EUDA files but not defined in EUDA_DATA_DICT."""
         undefinedFields = {}
