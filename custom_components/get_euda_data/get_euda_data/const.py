@@ -453,7 +453,6 @@ EUDA_DATA_DICT = {
     "open_state_tailgate": {
         "attr": "trunk_closed",
         "name": "Trunk closed",
-        "icon": "mdi:door-closed",
         "device_class": "door",
         "key": "dbb8f3b1-2bc9-3afc-a1d5-61f1eb04d1c4",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -461,7 +460,6 @@ EUDA_DATA_DICT = {
     "open_state_front_engine_bonnet": {
         "attr": "hood_closed",
         "name": "Hood closed",
-        "icon": "mdi:door-closed",
         "device_class": "door",
         "key": "e1c6d420-b439-3de6-a5b7-d0b474cc2752",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -469,15 +467,13 @@ EUDA_DATA_DICT = {
     "state_sunroof_motor_hood_1": {
         "attr": "sunroof_closed",
         "name": "Sunroof closed",
-        "icon": "mdi:dorr-closed",
-        "device_class": "door",
+        "device_class": "window",
         "key": "cff28415-8084-34e0-ad91-db191e5ff3b6",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
      "state_rear_right_door_window_lifter": {
         "attr": "window_closed_right_back",
         "name": "Window closed right back",
-        #"icon": "mdi:car-door",
         "device_class": "window",
         "key": "3ef13c1d-7e08-3cf4-b501-a8bda80cff78",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -485,7 +481,6 @@ EUDA_DATA_DICT = {
      "state_front_right_door_window_lifter": {
         "attr": "window_closed_right_front",
         "name": "Window closed right front",
-        #"icon": "mdi:car-door",
         "device_class": "window",
         "key": "5fcf7d27-6b76-3de0-9ce9-f207370cdaff",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -493,7 +488,6 @@ EUDA_DATA_DICT = {
      "state_rear_left_door_window_lifter": {
         "attr": "window_closed_left_back",
         "name": "Window closed left back",
-        #"icon": "mdi:car-door",
         "device_class": "window",
         "key": "5fb120bb-ab59-38fc-8e03-9ae197c7a1ae",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -501,7 +495,6 @@ EUDA_DATA_DICT = {
      "state_front_left_door_window_lifter": {
         "attr": "window_closed_left_front",
         "name": "Window closed left front",
-        #"icon": "mdi:car-door",
         "device_class": "window",
         "key": "60a4f436-5534-32f4-b4cc-b5a88a9d4b91",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
