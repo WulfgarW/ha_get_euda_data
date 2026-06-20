@@ -420,8 +420,8 @@ class PyCupraEntity(Entity):
 
     @property
     def name(self):
-        """Return full name of the entity."""
-        return f"{self.vin} {self._entity_name}"
+        """Return name of the entity."""
+        return self._entity_name
 
     @property
     def should_poll(self) -> bool:

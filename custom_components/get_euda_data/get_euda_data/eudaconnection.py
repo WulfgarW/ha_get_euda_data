@@ -955,7 +955,7 @@ class EUDAConnection:
                     ):
                         vin: str = vehicle.get("vin", "")
                         self.addToAnonymisationDict(vin, "[VIN_ANONYMISED]")
-                        nickName = vehicle.get("nickName", "unknown")
+                        nickName = vehicle.get("nickName", "")
                         newVehicle = {
                             "vin": vin,
                             "brand": self._session_auth_brand,

@@ -216,12 +216,8 @@ class EUDAVehicle:
         elif (key.startswith("10000000-0000") or key.startswith("11000000-0000")) and self.tripData != {}:
             return True
         for element in self.currentData.get("Data", []):
-            if (
-                element.get("key", "")
-                == key
-            ):
-                if "value" in element:
-                    return True
+            if element.get("key", "") == key:
+                return True
         return False
 
     @property
