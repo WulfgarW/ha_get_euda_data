@@ -4,7 +4,7 @@
 # Extract information from data files downloaded from the EU Data Act portal of Volkswagen group.
 import logging
 from datetime import datetime
-from typing import Any
+from typing import Any, TypedDict
 
 from .const import (
     EUDA_DATA_CONVERSION_FLOAT,
@@ -44,8 +44,8 @@ class EUDAVehicle:
         self._tripSumDictMonth = {}
         self._defined_EUDA_keys = set()
         for elem in EUDA_DATA_DICT.values():
-            if elem.get("key","") != "":
-                self._defined_EUDA_keys.add(elem.get("key",""))
+            if elem.get("key", "") != "":
+                self._defined_EUDA_keys.add(elem.get("key", ""))
 
     def dashboard(self, **config):
         """Returns dashboard, creates new if none exist."""
@@ -104,7 +104,7 @@ class EUDAVehicle:
         """Return model year"""
         return "unknown"
 
-    def getEUDADataFieldValue(self, key=None, conversion=None) -> Any:
+    def getEUDADataFieldValue(self, key: str, conversion: int | None = None) -> Any:
         """Return value of an EUDA data field identified by key."""
         if key == "00000000-0000-0000-0000-0000":
             attrs = self.getEUDADataAllUndefinedFields
@@ -119,11 +119,11 @@ class EUDAVehicle:
             if key.endswith("0000"):
                 return tripSum.get("startMileage", 0)
             elif key.endswith("0001"):
-                return tripSum.get("fuelConsumption", 0)/10
+                return tripSum.get("fuelConsumption", 0) / 10
             elif key.endswith("0002"):
-                return tripSum.get("electricConsumption", 0)/10
+                return tripSum.get("electricConsumption", 0) / 10
             elif key.endswith("0003"):
-                return tripSum.get("gasConsumption", 0)/10
+                return tripSum.get("gasConsumption", 0) / 10
             elif key.endswith("0004"):
                 return tripSum.get("travelTime", 0)
             elif key.endswith("0005"):
@@ -131,9 +131,7 @@ class EUDAVehicle:
             elif key.endswith("0006"):
                 return tripSum.get("tripEnd", 0)
             else:
-                self._LOGGER.warning(
-                    f"Unknown trip sum value key {key}."
-                )
+                self._LOGGER.warning(f"Unknown trip sum value key {key}.")
                 return tripSum
         for element in self.currentData.get("Data", []):
             if element.get("key", "") == key:
@@ -143,21 +141,26 @@ class EUDAVehicle:
                     elif conversion == EUDA_DATA_CONVERSION_FLOAT:
                         return float(element.get("value", "0"))
                     elif conversion == EUDA_DATA_CONVERSION_INT:
-                        if key == "cf28f7d9-6201-30b8-82e5-a461968d30dc" and int(element.get("value", "0")) == 65535:
+                        if (
+                            key == "cf28f7d9-6201-30b8-82e5-a461968d30dc"
+                            and int(element.get("value", "0")) == 65535
+                        ):
                             return -1
-                        elif key == "7405c11f-4d20-36d2-8381-18364aa1f444": # value of battery_state_report.remaining_charging_time_complete comes with a unit
+                        elif (
+                            key == "7405c11f-4d20-36d2-8381-18364aa1f444"
+                        ):  # value of battery_state_report.remaining_charging_time_complete comes with a unit
                             value = element.get("value", "0s")
                             try:
                                 if value.find("s") > 0:
-                                    return int(int(value[0:value.find("s")])/60)
+                                    return int(int(value[0 : value.find("s")]) / 60)
                                 elif value.find("min") > 0:
-                                    return int(value[0:value.find("min")])
+                                    return int(value[0 : value.find("min")])
                                 else:
                                     return int(value)
                             except Exception as e:
                                 self._LOGGER.warning(
                                     f"Failed to extract numerical value from value {value} for key {key}. Error {e}"
-                                    )
+                                )
                             return -1
                         elif element.get("value", "0") == "":
                             return 0
@@ -175,15 +178,31 @@ class EUDAVehicle:
                             return True
                         elif element.get("value", "") == "charging":
                             return True
-                        elif element.get("value", "") == "1" and element.get("dataFieldName", "").startswith("parking_brake"):
+                        elif element.get("value", "") == "1" and element.get(
+                            "dataFieldName", ""
+                        ).startswith("parking_brake"):
                             return True
-                        elif element.get("value", "") == "3" and element.get("dataFieldName", "").startswith("open_state"):
+                        elif element.get("value", "") == "3" and element.get(
+                            "dataFieldName", ""
+                        ).startswith("open_state"):
                             return True
-                        elif element.get("value", "") == "3" and element.get("dataFieldName", "").startswith("state_sunroof"):
+                        elif element.get("value", "") == "3" and element.get(
+                            "dataFieldName", ""
+                        ).startswith("state_sunroof"):
                             return True
-                        elif element.get("value", "") in ("3", "4", "5") and element.get("dataFieldName", "").startswith("parking_lights"):
+                        elif element.get("value", "") in (
+                            "3",
+                            "4",
+                            "5",
+                        ) and element.get("dataFieldName", "").startswith(
+                            "parking_lights"
+                        ):
                             return True
-                        elif element.get("value", "") == "3" and "window_lifter" in element.get("dataFieldName", ""):
+                        elif element.get(
+                            "value", ""
+                        ) == "3" and "window_lifter" in element.get(
+                            "dataFieldName", ""
+                        ):
                             return True
                     elif conversion == EUDA_DATA_CONVERSION_DIVIDE_BY_10:
                         return int(element.get("value", "0")) / 10
@@ -192,7 +211,9 @@ class EUDAVehicle:
                             float(element.get("value", "0.0")) / 10 - 273.1
                         )  # The temperature returned from the portal is in Kelvin
                     else:
-                        self._LOGGER.warning(f"Unknown conversion type {conversion} in getEUDADataFiledValue()")
+                        self._LOGGER.warning(
+                            f"Unknown conversion type {conversion} in getEUDADataFiledValue()"
+                        )
         if conversion == EUDA_DATA_CONVERSION_FLOAT:
             return 0.0
         elif conversion == EUDA_DATA_CONVERSION_INT:
@@ -207,19 +228,18 @@ class EUDAVehicle:
             return 0
         return ""
 
-    def isEUDADataFieldSupported(self, key=None) -> bool:
+    def isEUDADataFieldSupported(self, key: str) -> bool:
         """Return true if the EUDA data field identified by key is supported."""
         if key == "00000000-0000-0000-0000-0000":
             return True
         elif key == "01000000-0000-0000-0000-0000" and self.currentData != {}:
             return True
-        elif (key.startswith("10000000-0000") or key.startswith("11000000-0000")) and self.tripData != {}:
+        elif (
+            key.startswith("10000000-0000") or key.startswith("11000000-0000")
+        ) and self.tripData != {}:
             return True
         for element in self.currentData.get("Data", []):
-            if (
-                element.get("key", "")
-                == key
-            ):
+            if element.get("key", "") == key:
                 if "value" in element:
                     return True
         return False
@@ -228,10 +248,10 @@ class EUDAVehicle:
     def getEUDAFileTimestamp(self) -> datetime:
         """Return timestamp form the newest EUDA file (from the filename)."""
         if self.currentData.get("timeStamp", "") != "":
-                return self.currentData.get("timeStamp", "")
+            return self.currentData.get("timeStamp", "")
         return datetime.min
 
-    def getEUDADataFieldTimestamp(self, key=None) -> str:
+    def getEUDADataFieldTimestamp(self, key: str | None = None) -> str:
         """Return timestamp for an EUDA data field identified by key."""
         for element in self.currentData.get("Data", []):
             if element.get("key", "") == key:
@@ -244,30 +264,53 @@ class EUDAVehicle:
         """Return a dictionary of all EUDA data fields found in EUDA files but not defined in EUDA_DATA_DICT."""
         undefinedFields = {}
         for element in self.currentData.get("Data", []):
-            if element.get("key", "") not in self._defined_EUDA_keys and element.get("key", "") not in EUDA_DATA_NO_SHOW_SET:
+            if (
+                element.get("key", "") not in self._defined_EUDA_keys
+                and element.get("key", "") not in EUDA_DATA_NO_SHOW_SET
+            ):
                 if element.get("dataFieldName", "") != "":
-                    undefinedFields[element.get("dataFieldName", "-dataFieldNameMissing-")] = element.get("value", "")
+                    undefinedFields[
+                        element.get("dataFieldName", "-dataFieldNameMissing-")
+                    ] = element.get("value", "")
                 else:
-                    undefinedFields[element.get("key", "-dataFieldNameMissing-")] = element.get("value", "")
+                    undefinedFields[element.get("key", "-dataFieldNameMissing-")] = (
+                        element.get("value", "")
+                    )
         return dict(sorted(undefinedFields.items()))
 
-    def getLatestTripSumValues(self, sumType="day") -> dict:
+    def getLatestTripSumValues(self, sumType: str = "day") -> dict:
         """Return the calculated latest daily sum values from the trip history."""
         if sumType == "month":
             if self._tripSumDictMonth == {}:
-                self._LOGGER.warning("tripSumDictMonth is empty when getLatestTripSumValues is called. Recalculating.")
+                self._LOGGER.warning(
+                    "tripSumDictMonth is empty when getLatestTripSumValues is called. Recalculating."
+                )
                 self.calcLatestTripSumValues(sumType=sumType)
             return self._tripSumDictMonth
         else:
             if self._tripSumDictDay == {}:
-                self._LOGGER.warning("tripSumDictDay is empty when getLatestTripSumValues is called. Recalculating.")
+                self._LOGGER.warning(
+                    "tripSumDictDay is empty when getLatestTripSumValues is called. Recalculating."
+                )
                 self.calcLatestTripSumValues(sumType=sumType)
             return self._tripSumDictDay
 
-    def calcLatestTripSumValues(self, sumType="day"):
+    def calcLatestTripSumValues(self, sumType: str = "day"):
         """Calculate the latest daily sum values from the trip history."""
         try:
-            sumDict = {
+            SumDictType = TypedDict(
+                "SumDictType",
+                {
+                    "startMileage": int,
+                    "fuelConsumption": int,
+                    "electricConsumption": int,
+                    "gasConsumption": int,
+                    "travelTime": int,
+                    "distance": int,
+                    "tripEnd": datetime,
+                },
+            )
+            sumDict: SumDictType = {
                 "startMileage": 1000000,
                 "fuelConsumption": 0,
                 "electricConsumption": 0,
@@ -282,30 +325,61 @@ class EUDAVehicle:
                 latestTripEnd = element.get("tripEnd", datetime.min)
                 if sumType == "month":
                     latestTripEnd = latestTripEnd.replace(day=1)
-                minTimeStamp = datetime.combine(latestTripEnd.date(), datetime.min.time()).astimezone(None)
+                minTimeStamp = datetime.combine(
+                    latestTripEnd.date(), datetime.min.time()
+                ).astimezone(None)
                 sumDict["tripEnd"] = minTimeStamp
 
                 for element in self.tripData.values():
                     if minTimeStamp <= element.get("tripEnd", ""):
-                        if element.get("startMileage", 1000000) < sumDict["startMileage"]:
-                            sumDict["startMileage"] = element.get("startMileage", 1000000)
-                        sumDict["travelTime"] = sumDict["travelTime"] + element.get("travelTime", 0)
-                        sumDict["distance"] = sumDict["distance"] + element.get("distance", 0)
-                        sumDict["fuelConsumption"] = sumDict["fuelConsumption"] + element.get("fuelConsumption", 0) * element.get("distance", 0)
-                        sumDict["electricConsumption"] = sumDict["electricConsumption"] + element.get("electricConsumption", 0) * element.get("distance", 0)
-                        sumDict["gasConsumption"] = sumDict["gasConsumption"] + element.get("gasConsumption", 0) * element.get("distance", 0)
-            
-                if sumDict["distance"]>0:
-                    sumDict["fuelConsumption"] = int(sumDict["fuelConsumption"] / sumDict["distance"] +0.5)
-                    sumDict["electricConsumption"] = int(sumDict["electricConsumption"] / sumDict["distance"] +0.5)
-                    sumDict["gasConsumption"] = int(sumDict["gasConsumption"] / sumDict["distance"] +0.5)
+                        if (
+                            element.get("startMileage", 1000000)
+                            < sumDict["startMileage"]
+                        ):
+                            sumDict["startMileage"] = element.get(
+                                "startMileage", 1000000
+                            )
+                        sumDict["travelTime"] = sumDict["travelTime"] + element.get(
+                            "travelTime", 0
+                        )
+                        sumDict["distance"] = sumDict["distance"] + element.get(
+                            "distance", 0
+                        )
+                        sumDict["fuelConsumption"] = sumDict[
+                            "fuelConsumption"
+                        ] + element.get("fuelConsumption", 0) * element.get(
+                            "distance", 0
+                        )
+                        sumDict["electricConsumption"] = sumDict[
+                            "electricConsumption"
+                        ] + element.get("electricConsumption", 0) * element.get(
+                            "distance", 0
+                        )
+                        sumDict["gasConsumption"] = sumDict[
+                            "gasConsumption"
+                        ] + element.get("gasConsumption", 0) * element.get(
+                            "distance", 0
+                        )
+
+                if sumDict["distance"] > 0:
+                    sumDict["fuelConsumption"] = int(
+                        sumDict["fuelConsumption"] / sumDict["distance"] + 0.5
+                    )
+                    sumDict["electricConsumption"] = int(
+                        sumDict["electricConsumption"] / sumDict["distance"] + 0.5
+                    )
+                    sumDict["gasConsumption"] = int(
+                        sumDict["gasConsumption"] / sumDict["distance"] + 0.5
+                    )
 
             if sumType == "month":
                 self._tripSumDictMonth = sumDict
             else:
                 self._tripSumDictDay = sumDict
         except Exception as error:
-            self._LOGGER.warning(f"Failed to calculate latest trip sum values  - {error}")
+            self._LOGGER.warning(
+                f"Failed to calculate latest trip sum values  - {error}"
+            )
 
 
 def GetModelFromNickName(nickName: str) -> str:

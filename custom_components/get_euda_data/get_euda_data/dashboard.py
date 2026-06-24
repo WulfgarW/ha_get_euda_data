@@ -4,14 +4,15 @@
 import logging
 from .utilities import camel2slug
 from .const import (
-    EUDA_DATA_DICT, 
+    EUDA_DATA_DICT,
     EUDA_DATA_CONVERSION_INT,
-    EUDA_DATA_CONVERSION_BOOL, 
-    EUDA_LONG_TERM_DATA_START_MILEAGE_KEY, 
+    EUDA_DATA_CONVERSION_BOOL,
+    EUDA_LONG_TERM_DATA_START_MILEAGE_KEY,
     EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY,
 )
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class EUDAInstrument:
     def __init__(self, component, attr, name, icon=None, key=None, conversion=None):
@@ -75,19 +76,28 @@ class EUDAInstrument:
     @property
     def attributes(self):
         attrs = {}
-        if (self.key != "00000000-0000-0000-0000-0000" and 
-            self.key != "01000000-0000-0000-0000-0000" and 
-            not self.key.startswith("10000000-0000") and 
-            not self.key.startswith("11000000-0000")    
-            ):
+        if (
+            self.key != "00000000-0000-0000-0000-0000"
+            and self.key != "01000000-0000-0000-0000-0000"
+            and not self.key.startswith("10000000-0000")
+            and not self.key.startswith("11000000-0000")
+        ):
             attrs["EUDA field key"] = self.key
         if self.name.startswith("Last long length"):
-            if self.vehicle.isEUDADataFieldSupported(EUDA_LONG_TERM_DATA_START_MILEAGE_KEY):
-                attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(EUDA_LONG_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT)
+            if self.vehicle.isEUDADataFieldSupported(
+                EUDA_LONG_TERM_DATA_START_MILEAGE_KEY
+            ):
+                attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(
+                    EUDA_LONG_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT
+                )
                 return attrs
         if self.name.startswith("Last short length"):
-            if self.vehicle.isEUDADataFieldSupported(EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY):
-                attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT)
+            if self.vehicle.isEUDADataFieldSupported(
+                EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY
+            ):
+                attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(
+                    EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT
+                )
                 return attrs
         if self.key == "10000000-0000-0000-0000-0005":
             tripSum = self.vehicle.getLatestTripSumValues("day")
@@ -100,7 +110,9 @@ class EUDAInstrument:
         if self.name.startswith("Other fields found"):
             attrs = self.vehicle.getEUDADataAllUndefinedFields
             return attrs
-        if not self.name.startswith("Last long") and not self.name.startswith("Last short"):
+        if not self.name.startswith("Last long") and not self.name.startswith(
+            "Last short"
+        ):
             if self.vehicle.getEUDADataFieldTimestamp(self.key) != "unknown":
                 attrs["time stamp"] = self.vehicle.getEUDADataFieldTimestamp(self.key)
                 return attrs
@@ -111,13 +123,24 @@ class EUDAInstrument:
         try:
             return self.vehicle.isEUDADataFieldSupported(self.key)
         except Exception as error:
-            self._LOGGER.error(f"An error occurred when checking if {self.attr} is supported. Error: {error}")
+            self._LOGGER.error(
+                f"An error occurred when checking if {self.attr} is supported. Error: {error}"
+            )
             return False
 
 
 class EUDASensor(EUDAInstrument):
-    def __init__(self, attr, name, icon, unit=None, device_class=None, key=None, conversion=None):
-        super().__init__(component="sensor", attr=attr, name=name, icon=icon, key=key, conversion=conversion)
+    def __init__(
+        self, attr, name, icon, unit=None, device_class=None, key=None, conversion=None
+    ):
+        super().__init__(
+            component="sensor",
+            attr=attr,
+            name=name,
+            icon=icon,
+            key=key,
+            conversion=conversion,
+        )
         self.device_class = device_class
         self.unit = unit
 
@@ -142,8 +165,24 @@ class EUDASensor(EUDAInstrument):
 
 
 class EUDABinarySensor(EUDAInstrument):
-    def __init__(self, attr, name, device_class, icon="", reverse_state=False, key=None, conversion=None):
-        super().__init__(component="binary_sensor", attr=attr, name=name, icon=icon, key=key, conversion=conversion)
+    def __init__(
+        self,
+        attr,
+        name,
+        device_class,
+        icon="",
+        reverse_state=False,
+        key=None,
+        conversion=None,
+    ):
+        super().__init__(
+            component="binary_sensor",
+            attr=attr,
+            name=name,
+            icon=icon,
+            key=key,
+            conversion=conversion,
+        )
         self.device_class = device_class
         self.reverse_state = reverse_state
 
@@ -224,11 +263,18 @@ class Dashboard:
             self._LOGGER = _LOGGER
 
         self._config = config
-        self.instruments = [
-            instrument
-            for instrument in create_eudaInstruments()
-            if instrument.setup(vehicle, **config)
-        ]
+        self._LOGGER.debug(f"config={config}")
+        configuredInstrumentsForThisVehicle = config.get("configuredInstruments", {})
+        self.instruments = []
+        for instrument in create_eudaInstruments():
+            if instrument.setup(vehicle, **config):
+                self.instruments.append(instrument)
+            elif instrument.attr in configuredInstrumentsForThisVehicle:
+                self._LOGGER.debug(
+                    f"Instrument {instrument.name} not in current data file, "
+                    + "but known from earlier files. Will therefore be shown in HA."
+                )
+                self.instruments.append(instrument)
 
         self._LOGGER.debug(
             "Supported instruments: "

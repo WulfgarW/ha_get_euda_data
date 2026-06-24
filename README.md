@@ -5,17 +5,18 @@ This integration for Home Assistant will fetch data from the EU Data Act servers
 ## This is integration is based on [PyCupra](https://github.com/WulfgarW/homeassistant-pycupra), but now solely using the EU Data Act portal as data source.
 
 ### Supported setups
-This integration will only work for your car, if you have done the necessary preparation steps (see section 'Preparations to get EU Data Act data for your vehicle'). 
+This integration will only work for your car(s), if you have done the necessary preparation steps (see section 'Preparations to get EU Data Act data for your vehicle'). 
 
 ## Range of functions
-- It depends on your vehicle model, which home assistant entities become available for your vehicle. And it depends on, for which fields there is a definition present in the Get_EUDA_Data code. So if you are missing fields, that you want to have in home assistant, open an issue (https://github.com/WulfgarW/ha_get_euda_data/issues). New versions of Get_EUDA_Data can make more entities available.
+- It depends on your vehicle model, which home assistant entities become available for your vehicle. And it depends on, for which fields there is a definition present in the Get_EUDA_Data code. So if you see fields in your EUDA files, that you want to have as entities in home assistant, open an issue (https://github.com/WulfgarW/ha_get_euda_data/issues). New versions of Get_EUDA_Data can make more entities available.
 
 - And you should see an entity 'Other fields found'. The value shown for this entity is the number of fields found in your current EUDA file, for which there is no entity defined at the moment. And if you open the details for the 'Other fields found' entity, you see the name of these fields and the current value (as text) in the entity attributes.
+- If you see 'interesting' fields in the attributes of the 'Other fields found' entity, reload your device (via Settings>Devices&Services>Get_EUDA_Data, click on the three vertical points right from the cogwheel and chosse 'Reload').
 - It can happen, that a field, that was available in the current EUDA file when you reloaded you Get_EUDA_Data device is not always present in other EUDA files for your vehicle. E.g. some fields are only available, while your vehicle is charging. So don't be surprised, when you see 'Unavailable' for some entities.
-- In contrast to PyCupra and similar integrations, that communicated with the Seat/Cupra API, that the MyCupra and MySeat mobile phone apps are using, Get_EUDA_Data can only read data for your vehicle, it cannot change any vehicle setting.
+- In contrast to PyCupra and similar integrations, that communicated with the brands API, that the official mobile phone apps of your brand are using, Get_EUDA_Data can only read data for your vehicle, it cannot change any vehicle setting.
 
 ### How to use the driving data sum files
-- In the 'euda_data' folder (should normally be a subfolder of the <config dir> folder of HA), you find the files <VIN>_drivingData_dailySums.csv and <VIN>_drivingData_monthlySums.csv (and an .old file for both of them). Get_EUDA_Data uses these two files, to provide you with a history of the driving data. You can copy those files for further data analysis to another location, but do not delete these files from the 'euda_data' folder and do not edit these files accidently.
+- In the 'euda_data' folder (should normally be a subfolder of the <config dir> folder of HA), you find the files <VIN>_drivingData.csv (and an .old file for it). Get_EUDA_Data uses this file, to provide you with a history of the driving data. You can copy the file for further data analysis to another location, but do not delete it from the 'euda_data' folder and do not edit it accidently.
 
 ### Files in the euda_data/euda_files folder
 - Get_EUDA_Data collects the files downloaded from the EUDA portal in the folder 'euda_data/euda_files' and its in subfolders. So it preserves a history of the EUDA files for your vehicle(s). 
@@ -58,6 +59,11 @@ After that, you can go to Settings>Devices&Services, choose 'Add integration' an
 Clone or copy the repository and copy the folder 'ha_get_euda_data/custom_components/get_euda_data' into '<config dir>/custom_components'
 
 ## Configure
+
+### Entering credentials and choosing vehicle
+When you are adding a Get_EUDA_Data device, you are first asked to choose the vehicles brand and to enter your username and your password for the EUDA Data Act portal.
+When the login was successful, you see the vehicles available under your account. Choose one of them.
+(If you have several vehicles and want to use Get_EUDA_Data for more than one of them, you have to set up one Get_EUDA_Data device per vehicle.)
 
 ### Configuration options
 The integration options can be changed after setup by clicking on the "CONFIGURE" text on the integration.

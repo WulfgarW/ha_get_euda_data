@@ -3,15 +3,16 @@ from datetime import datetime, timezone
 import json
 import logging
 import re
+from typing import Any
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def json_loads(s):
+def json_loads(s: str) -> Any:
     return json.loads(s, object_hook=obj_parser)
 
 
-def obj_parser(obj):
+def obj_parser(obj) -> Any:
     """Parse datetime."""
     for key, val in obj.items():
         try:
@@ -30,11 +31,11 @@ def obj_parser(obj):
             pass
     return obj
 
-def camel2slug(s) -> str:
+
+def camel2slug(s: str) -> str:
     """Convert camelCase to camel_case.
 
     >>> camel2slug('fooBar')
     'foo_bar'
     """
     return re.sub("([A-Z])", "_\\1", s).lower().lstrip("_")
-

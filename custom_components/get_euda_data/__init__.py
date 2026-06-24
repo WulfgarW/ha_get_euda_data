@@ -421,7 +421,7 @@ class PyCupraEntity(Entity):
     @property
     def name(self):
         """Return full name of the entity."""
-        return f"{self.vin} {self._entity_name}"
+        return f"{self._entity_name}"
 
     @property
     def should_poll(self) -> bool:
@@ -516,15 +516,14 @@ class PyCupraCoordinator(DataUpdateCoordinator):
             _LOGGER.error("No eudaVehicles found")
             raise UpdateFailed("No vehicles found.")
 
-        allInstruments = []
-        _LOGGER.debug(
-                f"eudaVehicles={eudaVehicles}"
-        )
-        for singleVehicle in eudaVehicles:
-            dashboard = singleVehicle.dashboard()
-            allInstruments.extend(dashboard.instruments)
+        conf_instruments = self.entry.data.get(CONF_INSTRUMENTS, {}).copy()
+        #_LOGGER.debug(
+        #        f"eudaVehicles={eudaVehicles}"
+        #)
+        eudaVehicle = self.eudaConnection.vehicle(self.vin)
+        dashboard = eudaVehicle.dashboard(configuredInstruments=conf_instruments)
 
-        return allInstruments
+        return dashboard.instruments
 
     async def async_logout(self, event=None) -> bool:
         """Logout from Cupra/Seat portal"""
@@ -555,7 +554,7 @@ class PyCupraCoordinator(DataUpdateCoordinator):
             await self.eudaConnection.getVehicles()
             loop = asyncio.get_running_loop()
             if not await loop.run_in_executor(
-                None, self.eudaConnection.readTripStatisticsFile
+                None, self.eudaConnection.readTripStatisticsFile,self.vin
             ):
                 _LOGGER.warning(
                     "readTripStatisticsFile was not successful. Is there no file? Ignoring this problem."
@@ -588,7 +587,7 @@ class PyCupraCoordinator(DataUpdateCoordinator):
                 eudaVehicles = self.eudaConnection.vehicles
                 if self.eudaConnection._loginError is None:
                     try:
-                        rc2 = await self.eudaConnection.update()
+                        rc2 = await self.eudaConnection.update(self.vin)
                         if self.eudaConnection._loginError is not None:
                             _LOGGER.error(
                                 f"An error occurred in update of EU data act data. Error: {self.eudaConnection._loginError}"

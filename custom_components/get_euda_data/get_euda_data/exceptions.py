@@ -1,5 +1,5 @@
 class PyCupraConfigException(Exception):
-    """Raised when Seat/Cupra API client is configured incorrectly"""
+    """Raised when API client is configured incorrectly"""
 
     def __init__(self, status):
         """Initialize exception"""
@@ -40,15 +40,6 @@ class PyCupraException(Exception):
     def __init__(self, status):
         """Initialize exception"""
         super(PyCupraException, self).__init__(status)
-        self.status = status
-
-
-class PyCupraThrottledException(Exception):
-    """Raised when the API throttles the connection"""
-
-    def __init__(self, status):
-        """Initialize exception"""
-        super(PyCupraThrottledException, self).__init__(status)
         self.status = status
 
 
@@ -114,16 +105,3 @@ class PyCupraEUDAPermissionExpiredException(Exception):
         super(PyCupraEUDAPermissionExpiredException, self).__init__(status)
         self.status = status
 
-
-# To make sure, older versions of homeassistant-pycupra also work with pycupra v0.2.14, the old SeatExceptions used by __init__.py are still there
-# (will be deleted in the future)
-SeatConfigException = PyCupraConfigException
-SeatAuthenticationException = PyCupraAuthenticationException
-SeatAccountLockedException = PyCupraAccountLockedException
-SeatTokenExpiredException = PyCupraTokenExpiredException
-SeatException = PyCupraException
-SeatEULAException = PyCupraEULAException
-SeatThrottledException = PyCupraThrottledException
-SeatLoginFailedException = PyCupraLoginFailedException
-SeatInvalidRequestException = PyCupraInvalidRequestException
-SeatRequestInProgressException = PyCupraRequestInProgressException

@@ -29,7 +29,7 @@
         }
       },
       "reauth_confirm": {
-        "description": "Re-authenticate with your Cupra/Seat account.\nMake sure to accept any new EULA in the Cupra/Seat portal before proceeding.",
+        "description": "Re-authenticate with your brand account.\nMake sure to accept any new EULA in the drivingsomethinggreater portal before proceeding.",
         "data": {
           "brand": "[%key:common::config_flow::data::brand%]",
           "email": "[%key:common::config_flow::data::email%]",

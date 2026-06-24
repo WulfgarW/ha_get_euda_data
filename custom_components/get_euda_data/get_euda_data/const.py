@@ -1,9 +1,11 @@
 """Constants for EUDA library."""
 
+DATA_DIRECTORY = "euda_data"
+
 AUTH_OIDCONFIG = "https://identity.vwgroup.io/.well-known/openid-configuration"  # OpenID configuration
 
 # Constants for EUDA connection
-EUDA_CLIENT_LIST= {
+EUDA_CLIENT_LIST = {
     "cupra": {
         "CLIENT_ID": "f85e5b69-e3b2-43aa-9c0d-1b7d0e0b576f@apps_vw-dilab_com",
         "SCOPE": "openid profile cars",
@@ -58,15 +60,9 @@ EUDA_AUTH_ISSUER = "https://identity.vwgroup.io"  # Authorization issuer for EUD
 
 EUDA_BASE_URL = "https://eu-data-act.drivesomethinggreater.com"
 EUDA_API_VEHICLES = "{baseurl}/proxy_api/consent/me/vehicles?viewPosition={viewPos}"  # Endpoint to get vehicles
-EUDA_API_FILE_DOWNLOAD = (
-    "{baseurl}/proxy_api/euda-apim/datadelivery/vehicles/{vin}/{id}/download"  # Endpoint to download a data file
-)
-EUDA_API_FILE_LIST = (
-    "{baseurl}/proxy_api/euda-apim/datadelivery/vehicles/{vin}/{id}/list"  # Endpoint to read a list of available files
-)
-EUDA_API_DATACLUSTERS = (
-    "{baseurl}/proxy_api/euda-apim/datarequest/vehicles/{vin}/metadata/{type}"  # Endpoint to read data cluster information
-)
+EUDA_API_FILE_DOWNLOAD = "{baseurl}/proxy_api/euda-apim/datadelivery/vehicles/{vin}/{id}/download"  # Endpoint to download a data file
+EUDA_API_FILE_LIST = "{baseurl}/proxy_api/euda-apim/datadelivery/vehicles/{vin}/{id}/list"  # Endpoint to read a list of available files
+EUDA_API_DATACLUSTERS = "{baseurl}/proxy_api/euda-apim/datarequest/vehicles/{vin}/metadata/{type}"  # Endpoint to read data cluster information
 EUDA_URL_DETAILS = "{baseurl}/content/euda/de/en/user/details?vin={vin}"
 
 EUDA_API_TOKEN = "{baseurl}/libs/granite/csrf/token.json"
@@ -95,14 +91,12 @@ EUDA_LONG_TERM_DATA_AVERAGE_ELECTR_ENGINE_CONSUMPTION_KEY = (
 EUDA_LONG_TERM_DATA_AVERAGE_FUEL_CONSUMPTION_KEY = (
     "df531c6f-8897-3236-a760-5975322e7021"
 )
-EUDA_LONG_TERM_DATA_AVERAGE_GAS_CONSUMPTION_KEY = (
-    "a326ae4c-afe8-3929-bf1a-b95ba7107c2f"
-)
+EUDA_LONG_TERM_DATA_AVERAGE_GAS_CONSUMPTION_KEY = "a326ae4c-afe8-3929-bf1a-b95ba7107c2f"
 EUDA_LONG_TERM_DATA_AVERAGE_SPEED_KEY = "77838f59-786a-36fa-b1d4-47217a9fb40e"
-#EUDA_OUTSIDE_TEMPERATURE_KEY = "6810b781-e54a-35e8-af98-fcdefb54bac6"
-#EUDA_PARKING_BRAKE_KEY = "f8bbe94d-06e1-3311-bf8f-c0c99cc67d48"
-#EUDA_OIL_LEVEL_ADDITIONAL_OIL_LEVEL_KEY = "78e92351-cf56-3c15-96d3-9b63d62ca618"
-#EUDA_OIL_LEVEL_ACTUAL_LEVEL_KEY = "a3368611-8c63-3b7d-9d19-148a464c7a7b"
+# EUDA_OUTSIDE_TEMPERATURE_KEY = "6810b781-e54a-35e8-af98-fcdefb54bac6"
+# EUDA_PARKING_BRAKE_KEY = "f8bbe94d-06e1-3311-bf8f-c0c99cc67d48"
+# EUDA_OIL_LEVEL_ADDITIONAL_OIL_LEVEL_KEY = "78e92351-cf56-3c15-96d3-9b63d62ca618"
+# EUDA_OIL_LEVEL_ACTUAL_LEVEL_KEY = "a3368611-8c63-3b7d-9d19-148a464c7a7b"
 
 EUDA_DATA_CONVERSION_FLOAT = 0
 EUDA_DATA_CONVERSION_INT = 1
@@ -172,7 +166,7 @@ EUDA_DATA_DICT = {
         "name": "Oil level",
         "icon": "mdi:oil",
         "unit": "%",
-        #"device_class": "temperature",
+        # "device_class": "temperature",
         "key": "a3368611-8c63-3b7d-9d19-148a464c7a7b",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -180,7 +174,7 @@ EUDA_DATA_DICT = {
         "attr": "parking_brake",
         "name": "Parking brake",
         "icon": "mdi:car-brake-parking",
-        #"unit": "%",
+        # "unit": "%",
         "device_class": "door",
         "key": "f8bbe94d-06e1-3311-bf8f-c0c99cc67d48",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -208,7 +202,7 @@ EUDA_DATA_DICT = {
         "name": "Last long average fuel consumption",
         "icon": "mdi:fuel",
         "unit": "l/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "df531c6f-8897-3236-a760-5975322e7021",
         "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
@@ -217,7 +211,7 @@ EUDA_DATA_DICT = {
         "name": "Last long average gas consumption",
         "icon": "mdi:storage-tank",
         "unit": "kg/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "a326ae4c-afe8-3929-bf1a-b95ba7107c2f",
         "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
@@ -253,7 +247,7 @@ EUDA_DATA_DICT = {
         "name": "Last short average fuel consumption",
         "icon": "mdi:fuel",
         "unit": "l/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "a0ee824b-9a53-34ee-8107-3ed94684efa7",
         "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
@@ -262,7 +256,7 @@ EUDA_DATA_DICT = {
         "name": "Last short average gas consumption",
         "icon": "mdi:storage-tank",
         "unit": "kg/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "bdf31409-b799-3969-8199-e305082aabf2",
         "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
@@ -289,7 +283,7 @@ EUDA_DATA_DICT = {
         "name": "Fuel level",
         "icon": "mdi:fuel",
         "unit": "%",
-        #"device_class": "distance",
+        # "device_class": "distance",
         "key": "1503760b-5570-3001-8ffc-1bb6f464948e",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
@@ -298,7 +292,7 @@ EUDA_DATA_DICT = {
         "name": "Tank level",
         "icon": "mdi:fuel",
         "unit": "%",
-        #"device_class": "distance",
+        # "device_class": "distance",
         "key": "3ba7c870-d2a7-3383-8a17-e4048a57a583",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -307,7 +301,7 @@ EUDA_DATA_DICT = {
         "name": "Cng level",
         "icon": "mdi:storage-tank",
         "unit": "%",
-        #"device_class": "distance",
+        # "device_class": "distance",
         "key": "c129d05d-de28-3490-a74a-27811b5e8e2e",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
@@ -404,7 +398,7 @@ EUDA_DATA_DICT = {
     "lock_state": {
         "attr": "doors_locked",
         "name": "Doors locked",
-        #"icon": "mdi:car",
+        # "icon": "mdi:car",
         "device_class": "lock",
         "key": "60bc0937-f5a7-3809-9535-9a7942e5dd94",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -412,7 +406,7 @@ EUDA_DATA_DICT = {
     "locked": {
         "attr": "doors_all_locked",
         "name": "Doors all locked",
-        #"icon": "mdi:car",
+        # "icon": "mdi:car",
         "device_class": "lock",
         "key": "bd917b58-82bd-3c34-a006-747ca5aec03d",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
@@ -424,7 +418,7 @@ EUDA_DATA_DICT = {
         "device_class": "door",
         "key": "bc9bbc65-8461-30eb-88db-f94148552a20",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
-        #"reverse_state": True,
+        # "reverse_state": True,
     },
     "open_state_rear_left_door": {
         "attr": "door_closed_left_back",
@@ -442,7 +436,7 @@ EUDA_DATA_DICT = {
         "key": "0bb971a6-12ef-3382-9b99-5ed0a52f18e9",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-     "open_state_rear_right_door": {
+    "open_state_rear_right_door": {
         "attr": "door_closed_right_back",
         "name": "Door closed right back",
         "icon": "mdi:car-door",
@@ -471,42 +465,42 @@ EUDA_DATA_DICT = {
         "key": "cff28415-8084-34e0-ad91-db191e5ff3b6",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-     "state_rear_right_door_window_lifter": {
+    "state_rear_right_door_window_lifter": {
         "attr": "window_closed_right_back",
         "name": "Window closed right back",
         "device_class": "window",
         "key": "3ef13c1d-7e08-3cf4-b501-a8bda80cff78",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-     "state_front_right_door_window_lifter": {
+    "state_front_right_door_window_lifter": {
         "attr": "window_closed_right_front",
         "name": "Window closed right front",
         "device_class": "window",
         "key": "5fcf7d27-6b76-3de0-9ce9-f207370cdaff",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-     "state_rear_left_door_window_lifter": {
+    "state_rear_left_door_window_lifter": {
         "attr": "window_closed_left_back",
         "name": "Window closed left back",
         "device_class": "window",
         "key": "5fb120bb-ab59-38fc-8e03-9ae197c7a1ae",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-     "state_front_left_door_window_lifter": {
+    "state_front_left_door_window_lifter": {
         "attr": "window_closed_left_front",
         "name": "Window closed left front",
         "device_class": "window",
         "key": "60a4f436-5534-32f4-b4cc-b5a88a9d4b91",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-   "charging_state": {
+    "charging_state": {
         "attr": "charging_state",
         "name": "Charging state",
         "icon": "mdi:battery",
         "key": "9da735bb-c5d5-39f8-bf53-0fa2a367aa8f",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-   "charging_state_report.current_charge_state": {
+    "charging_state_report.current_charge_state": {
         "attr": "current_charge_state",
         "name": "Current charge state",
         "icon": "mdi:battery",
@@ -557,7 +551,7 @@ EUDA_DATA_DICT = {
         "name": "Charge energy",
         "icon": "mdi:flash",
         "unit": "kWh",
-        #"device_class": "power",
+        # "device_class": "power",
         "key": "e532aed3-190a-3ff0-bfa4-2e05c61c929e",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -582,7 +576,7 @@ EUDA_DATA_DICT = {
         "key": "0387de65-ce87-3750-b9d7-906687095200",
         "conversion": None,
     },
-   "plug_state": {
+    "plug_state": {
         "attr": "charging_cable_connected",
         "name": "Charging cable connected",
         "icon": "mdi:battery",
@@ -590,12 +584,12 @@ EUDA_DATA_DICT = {
         "key": "c111830c-f959-30d2-859a-ea996190d864",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
-   "external_power_supply_state": {
+    "external_power_supply_state": {
         "attr": "external_power_supply_state",
         "name": "External power supply state",
         "icon": "mdi:battery",
-        #"unit": "km",
-        #"device_class": "plug",
+        # "unit": "km",
+        # "device_class": "plug",
         "key": "a56a4e27-7d8d-3434-a746-4736c3b5a496",
         "conversion": None,
     },
@@ -649,7 +643,7 @@ EUDA_DATA_DICT = {
         "name": "Max energy content physical",
         "icon": "mdi:battery",
         "unit": "kWh",
-        #"device_class": "temperature",
+        # "device_class": "temperature",
         "key": "09ed1319-7b17-31c6-ba74-817ce91a4c1d",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -658,7 +652,7 @@ EUDA_DATA_DICT = {
         "name": "Current energy content physical",
         "icon": "mdi:battery",
         "unit": "kWh",
-        #"device_class": "temperature",
+        # "device_class": "temperature",
         "key": "84e64812-6eaa-3477-b587-0c5b02d8446f",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -666,35 +660,35 @@ EUDA_DATA_DICT = {
         "attr": "ascent_slope_consumption_physical",
         "name": "Ascent slope consumption physical",
         "icon": "mdi:battery",
-        #"unit": "kWh",
-        #"device_class": "temperature",
+        # "unit": "kWh",
+        # "device_class": "temperature",
         "key": "45df4e5a-c2e3-3588-b917-e572ef5ac213",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
-    "parking_lights": { 
-        "attr": "parking_lights", 
-        "name": "Parking lights", 
-        "icon": "mdi:car-parking-lights", 
-        "device_class": "light", 
-        "key": "c17ead4f-09b8-357f-ac2b-38c448ab88c4", 
-        "conversion": EUDA_DATA_CONVERSION_BOOL, 
-    }, 
-    "parking_light_left": { 
-        "attr": "parking_light_left", 
-        "name": "Parking light left", 
-        "icon": "mdi:car-parking-lights", 
-        "device_class": "light", 
-        "key": "c7828009-144b-36e9-af38-2c35e7356c34", 
-        "conversion": EUDA_DATA_CONVERSION_BOOL, 
-    }, 
-    "parking_light_right": { 
-        "attr": "parking_light_right", 
-        "name": "Parking light right", 
-        "icon": "mdi:car-parking-lights", 
-        "device_class": "light", 
-        "key": "0fa69b72-8432-3ef4-a312-cbb2f7861dfc", 
-        "conversion": EUDA_DATA_CONVERSION_BOOL, 
-    }, 
+    "parking_lights": {
+        "attr": "parking_lights",
+        "name": "Parking lights",
+        "icon": "mdi:car-parking-lights",
+        "device_class": "light",
+        "key": "c17ead4f-09b8-357f-ac2b-38c448ab88c4",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "parking_light_left": {
+        "attr": "parking_light_left",
+        "name": "Parking light left",
+        "icon": "mdi:car-parking-lights",
+        "device_class": "light",
+        "key": "c7828009-144b-36e9-af38-2c35e7356c34",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "parking_light_right": {
+        "attr": "parking_light_right",
+        "name": "Parking light right",
+        "icon": "mdi:car-parking-lights",
+        "device_class": "light",
+        "key": "0fa69b72-8432-3ef4-a312-cbb2f7861dfc",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
     "remaining_charging_time": {
         "attr": "charging_time_left",
         "name": "Charging time left",
@@ -713,27 +707,27 @@ EUDA_DATA_DICT = {
         "key": "7405c11f-4d20-36d2-8381-18364aa1f444",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
-    "other_fields_found": { 
-        "attr": "other_fields_found", 
-        "name": "Other fields found", 
-        "icon": "mdi:help-circle-outline", 
-        "key": "00000000-0000-0000-0000-0000", 
-        "conversion": None, 
-    }, 
-    "newest_file_timestamp": { 
-        "attr": "newest_file_timestamp", 
-        "name": "Newest file timestamp", 
-        "icon": "mdi:timeline-clock", 
+    "other_fields_found": {
+        "attr": "other_fields_found",
+        "name": "Other fields found",
+        "icon": "mdi:help-circle-outline",
+        "key": "00000000-0000-0000-0000-0000",
+        "conversion": None,
+    },
+    "newest_file_timestamp": {
+        "attr": "newest_file_timestamp",
+        "name": "Newest file timestamp",
+        "icon": "mdi:timeline-clock",
         "device_class": "timestamp",
-        "key": "01000000-0000-0000-0000-0000", 
-        "conversion": None, 
-    }, 
+        "key": "01000000-0000-0000-0000-0000",
+        "conversion": None,
+    },
     "daily_sum_average_fuel_consumption": {
         "attr": "daily_sum_average_fuel_consumption",
         "name": "Latest daily sum average fuel consumption",
         "icon": "mdi:fuel",
         "unit": "l/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "10000000-0000-0000-0000-0001",
     },
     "daily_sum_average_electr_engine_consumption": {
@@ -749,7 +743,7 @@ EUDA_DATA_DICT = {
         "name": "Latest daily sum average gas consumption",
         "icon": "mdi:storage-tank",
         "unit": "kg/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "10000000-0000-0000-0000-0003",
     },
     "daily_sum_travel_time": {
@@ -773,7 +767,7 @@ EUDA_DATA_DICT = {
         "name": "Latest monthly sum average fuel consumption",
         "icon": "mdi:fuel",
         "unit": "l/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "11000000-0000-0000-0000-0001",
     },
     "monthly_sum_average_electr_engine_consumption": {
@@ -789,7 +783,7 @@ EUDA_DATA_DICT = {
         "name": "Latest monthly sum average gas consumption",
         "icon": "mdi:storage-tank",
         "unit": "kg/100km",
-        #"device_class": "energy_distance",
+        # "device_class": "energy_distance",
         "key": "11000000-0000-0000-0000-0003",
     },
     "monthly_sum_travel_time": {
@@ -808,18 +802,17 @@ EUDA_DATA_DICT = {
         "device_class": "distance",
         "key": "11000000-0000-0000-0000-0005",
     },
-
 }
 
 EUDA_DATA_NO_SHOW_SET = (
     EUDA_LONG_TERM_DATA_START_MILEAGE_KEY,
     EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY,
-    "0f43f2e7-3556-36a9-8271-a60bc54afad8", # echo
-    "7e35b2a4-8f31-30a7-848d-3af7bb1c5e55", # fuel_level__accuracy
-    "173589ce-e437-3c6e-a0ec-6df704586fd7", # trueness
-    "d7d35c0a-706c-3f28-a61a-c3b002116a25", # tyre_pressure_differential_rear_right
-    "a59fa6dd-c0e8-35af-afc0-1f411c33c78c", # tyre_pressure_differential_rear_left
-    "351e9e10-b831-391e-9fc4-ccacc8cd3eba", # tyre_pressure_differential_spare_tyre
-    "a86e735b-5f04-336a-8dc7-8fb189d02cd2", # tyre_pressure_differential_front_right
-    "69729e19-7b1a-3189-8e11-b4b31ab7601a", # tyre_pressure_differential_front_left
+    "0f43f2e7-3556-36a9-8271-a60bc54afad8",  # echo
+    "7e35b2a4-8f31-30a7-848d-3af7bb1c5e55",  # fuel_level__accuracy
+    "173589ce-e437-3c6e-a0ec-6df704586fd7",  # trueness
+    "d7d35c0a-706c-3f28-a61a-c3b002116a25",  # tyre_pressure_differential_rear_right
+    "a59fa6dd-c0e8-35af-afc0-1f411c33c78c",  # tyre_pressure_differential_rear_left
+    "351e9e10-b831-391e-9fc4-ccacc8cd3eba",  # tyre_pressure_differential_spare_tyre
+    "a86e735b-5f04-336a-8dc7-8fb189d02cd2",  # tyre_pressure_differential_front_right
+    "69729e19-7b1a-3189-8e11-b4b31ab7601a",  # tyre_pressure_differential_front_left
 )

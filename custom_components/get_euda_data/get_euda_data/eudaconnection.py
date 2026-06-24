@@ -39,6 +39,7 @@ from aiohttp.hdrs import METH_GET, METH_POST, METH_PUT, METH_DELETE
 from http import cookies
 
 from .const import (
+    DATA_DIRECTORY,
     AUTH_OIDCONFIG,
     EUDA_CLIENT_LIST,
     # EUDA_AUTH_OIDC,
@@ -130,9 +131,9 @@ class EUDAConnection:
         self.tripData: dict = {}
         try:
             if self._hass:
-                self._dataBasePath = self._hass.config.path("euda_data")
+                self._dataBasePath = self._hass.config.path(DATA_DIRECTORY)
             else:
-                self._dataBasePath = os.path.join(".", "euda_data")
+                self._dataBasePath = os.path.join(".", DATA_DIRECTORY)
             if not os.path.exists(self._dataBasePath):
                 self._LOGGER.error(
                     f"Directory {self._dataBasePath} does not exist. This should only happen once. Creating it."
@@ -225,7 +226,9 @@ class EUDAConnection:
                 + "&redirect_uri="
             )
             authorization_url = (
-                authorization_url + EUDA_CLIENT_LIST[client]["REDIRECT_URL"] + "&prompt=login"
+                authorization_url
+                + EUDA_CLIENT_LIST[client]["REDIRECT_URL"]
+                + "&prompt=login"
             )
 
             req = await self._session.get(
@@ -283,7 +286,9 @@ class EUDAConnection:
             if "signin-service" in ref:
                 self._LOGGER.debug("Got redirect to signin-service")
                 # location = await self._signin_service(req, EUDA_AUTH_ISSUER, EUDA_AUTH_OIDC)
-                location = await self._signin_service(req, auth_issuer, auth_oidc, client)
+                location = await self._signin_service(
+                    req, auth_issuer, auth_oidc, client
+                )
             else:
                 # We are already logged on, shorter authorization flow
                 location = req.headers.get("Location", None)
@@ -498,10 +503,11 @@ class EUDAConnection:
         return True
 
     async def _signin_service(
-        self, html: aiohttp.ClientResponse, 
-        authissuer: str, 
+        self,
+        html: aiohttp.ClientResponse,
+        authissuer: str,
         authorizationEndpoint: str,
-        client: str
+        client: str,
     ) -> Any:
         """Method to signin to Connect portal."""
         # Extract login form and extract attributes
@@ -703,6 +709,10 @@ class EUDAConnection:
                 self._LOGGER.error(
                     'Received "Bad Request" from server. The request might be malformed or not implemented correctly for this vehicle.'
                 )
+            elif error.status == 404:
+                self._LOGGER.debug(
+                    'Received "Not found". Possibly the request was looking for something, that is not available.'
+                )
             elif error.status == 412:
                 self._LOGGER.debug(
                     'Received "Pre-condition failed". Service might be temporarily unavailable.'
@@ -715,17 +725,21 @@ class EUDAConnection:
                 self._LOGGER.info(
                     'Received "Bad gateway". Either the endpoint is temporarily unavailable or not supported for this vehicle.'
                 )
+            elif error.status == 503:
+                self._LOGGER.info(
+                    'Received "Service unavailable". Possibly the server is overloaded or down for maintenance.'
+                )
             elif 400 <= error.status <= 499:
                 self._LOGGER.error(
-                    "Received unhandled error indicating client-side problem.\nRestart or try again later."
+                    f"Received unhandled error {error.status} indicating client-side problem.\nRestart or try again later."
                 )
             elif 500 <= error.status <= 599:
                 self._LOGGER.error(
-                    "Received unhandled error indicating server-side problem.\nThe service might be temporarily unavailable."
+                    f"Received unhandled error {error.status} indicating server-side problem.\nThe service might be temporarily unavailable."
                 )
             else:
                 self._LOGGER.error(
-                    "Received unhandled error while requesting API endpoint."
+                    f"Received unhandled error {error.status} while requesting API endpoint."
                 )
             self._LOGGER.debug(self.anonymise(f"HTTP request information: {data}"))
             return data
@@ -947,7 +961,11 @@ class EUDAConnection:
         else:
             try:
                 for vehicle in data["vehicles"]:
-                    self._LOGGER.debug(self.anonymise(f"Checking vehicle {vehicle}"))
+                    self._LOGGER.debug(
+                        self.anonymise(
+                            f"Checking vehicle {vehicle.get('nickName', '')}"
+                        )
+                    )
                     # Only vehicles with role='PRIMARY_USER' and enrollmentStatus='COMPLETED' are valid
                     if (
                         vehicle.get("role", "") == "PRIMARY_USER"
@@ -955,7 +973,7 @@ class EUDAConnection:
                     ):
                         vin: str = vehicle.get("vin", "")
                         self.addToAnonymisationDict(vin, "[VIN_ANONYMISED]")
-                        nickName = vehicle.get("nickName", "unknown")
+                        nickName = vehicle.get("nickName", "")
                         newVehicle = {
                             "vin": vin,
                             "brand": self._session_auth_brand,
@@ -1010,16 +1028,16 @@ class EUDAConnection:
                     f"Could not find a customised data request for your account, HTTP status code: {response.get('status_code')}. Did you forget to create one?"
                 )
             elif response.get("status_code", {}):
-                self._LOGGER.warning(
-                    f"Could not fetch data cluster information, HTTP status code: {response.get('status_code')}"
+                self._LOGGER.info(
+                    f"Could not fetch data cluster information for cluster type '{type}', HTTP status code: {response.get('status_code')}"
                 )
             else:
                 self._LOGGER.info(
-                    "Unhandled error while trying to fetch data cluster information"
+                    f"Unhandled error while trying to fetch data cluster information for cluster type '{type}'."
                 )
         except Exception as error:
             self._LOGGER.error(
-                f"Could not fetch data cluster information, error: {error}"
+                f"Could not fetch data cluster information for cluster type '{type}'. Error: {error}"
             )
             raise PyCupraInvalidRequestException(
                 "Unable to fetch data cluster information"
@@ -1081,7 +1099,7 @@ class EUDAConnection:
                 self._session_headers.pop("type")
             if self._session_headers.get("filename", None) is not None:
                 self._session_headers.pop("filename")
-            #raise PyCupraInvalidRequestException("Unable to download data file")
+            # raise PyCupraInvalidRequestException("Unable to download data file")
         return bytes(0)
 
     def writeDataFile(self, fileNameWithPath: str, fileContent) -> bool:
@@ -1104,25 +1122,30 @@ class EUDAConnection:
             return False
 
     #### Functions, that process the downloaded files and extract the information
-    async def update(self) -> bool:
+    async def update(self, vin: str | None = None) -> bool:
         """To be called regularly to get new files from the portal and to process them"""
         try:
             loop = asyncio.get_running_loop()
-            await loop.run_in_executor(None, self.checkForFilesInProcess)
+            await loop.run_in_executor(None, self.checkForFilesInProcess, vin)
 
-            await self.getData()
+            await self.getData(vin)
 
-            if not await self.processFiles():
+            if not await self.processFiles(vin):
                 _LOGGER.warning(
                     "Call processFiles() was not successful. Ignoring this problem."
                 )
 
             return True
         except Exception as e:
-            self._LOGGER.error(f"update() not successful. Error: {e}")
+            if vin is None:
+                self._LOGGER.error(f"update() not successful. Error: {e}")
+            else:
+                self._LOGGER.error(
+                    f"update() not successful for vehicle {vin}. Error: {e}"
+                )
         return False
 
-    async def addFileToZipArchive(self, fileFolder, fileName) -> bool:
+    async def addFileToZipArchive(self, fileFolder: str, fileName: str) -> bool:
         try:
             zipFileName = os.path.join(
                 self._dataFolderArchive,
@@ -1149,10 +1172,10 @@ class EUDAConnection:
                     )
             return True
         except Exception as e:
-            self._LOGGER.warning(f'readZipFile() not successful. Error: {e}')
+            self._LOGGER.warning(f"readZipFile() not successful. Error: {e}")
             return False
 
-    async def archiveFiles(self) -> bool:
+    async def archiveFiles(self, vin: str | None = None) -> bool:
         """Archive EUDA files older than 10 days in the archive folder"""
         try:
             now = datetime.now(tz=None)
@@ -1169,33 +1192,35 @@ class EUDAConnection:
                 counter = 0
                 for entryName in filesInProcessedDir:
                     if GetTimeStampFromFileName(entryName) < compareDate:
-                        if await self.addFileToZipArchive(
-                            self._dataFolderProcessed, entryName
-                        ):
-                            os.remove(
-                                os.path.join(self._dataFolderProcessed, entryName)
-                            )
-                            counter = counter + 1
-                        else:
-                            self._LOGGER.error(
-                                f"Failed to add file {entryName} to zip archive. Keeping it in processed files folder."
-                            )
+                        if vin is None or vin in entryName:
+                            if await self.addFileToZipArchive(
+                                self._dataFolderProcessed, entryName
+                            ):
+                                os.remove(
+                                    os.path.join(self._dataFolderProcessed, entryName)
+                                )
+                                counter = counter + 1
+                            else:
+                                self._LOGGER.error(
+                                    f"Failed to add file {entryName} to zip archive. Keeping it in processed files folder."
+                                )
                 self._LOGGER.debug(
                     f"Moved {counter} files from 'processed' folder to archive."
                 )
                 return True
         except Exception as e:
-            self._LOGGER.warning(f'archiveFiles() not successful. Error: {e}')
+            self._LOGGER.warning(f"archiveFiles() not successful. Error: {e}")
         return False
 
-    async def processFiles(self) -> bool:
+    async def processFiles(self, vin: str | None = None) -> bool:
         """Process files in 'euda_files' folder, move them to 'in_process' folder and then extract trip information from raw data"""
         try:
             loop = asyncio.get_running_loop()
             filesInDir = await loop.run_in_executor(None, os.scandir, self._dataFolder)
             for entry in filesInDir:
                 if entry.is_file():
-                    await self.processSingleFile(entry)
+                    if vin is None or vin in entry.name:
+                        await self.processSingleFile(entry)
             self._LOGGER.debug("Finished reading files.")
             if not self.extractTripsFromRawData():
                 self._LOGGER.warning(
@@ -1203,7 +1228,7 @@ class EUDAConnection:
                 )
                 return False
             loop = asyncio.get_running_loop()
-            await loop.run_in_executor(None, self.writeTripStatisticsFile)
+            await loop.run_in_executor(None, self.writeTripStatisticsFile, vin)
 
             # Check, if self.rawData is empty
             if self.rawData == {}:
@@ -1216,9 +1241,10 @@ class EUDAConnection:
                 )
                 for entry in filesInProcessedDir:
                     if entry.is_file():
-                        if GetTimeStampFromFileName(entry.name) > newestTimestamp:
-                            newestTimestamp = GetTimeStampFromFileName(entry.name)
-                            newestEntry = entry
+                        if vin is None or vin in entry.name:
+                            if GetTimeStampFromFileName(entry.name) > newestTimestamp:
+                                newestTimestamp = GetTimeStampFromFileName(entry.name)
+                                newestEntry = entry
                 if newestEntry is not None:
                     await self.extractInformationFromFile(newestEntry)
                     self._LOGGER.debug(
@@ -1227,15 +1253,13 @@ class EUDAConnection:
                         )
                     )
 
-            # Copy currentData for each vehicle in the vehicle itself
+            # Copy currentData and tripData for each vehicle in the vehicle itself
             for vehicle in self.vehicles:
-                vehicle.currentData = self.currentData.get(vehicle.vin, {})
-
-            # Copy tripData for each vehicle in the vehicle itself
-            for vehicle in self.vehicles:
-                vehicle.tripData = self.tripData.get(vehicle.vin, {})
-                vehicle.calcLatestTripSumValues(sumType="day")
-                vehicle.calcLatestTripSumValues(sumType="month")
+                if vin is None or vehicle.vin == vin:
+                    vehicle.currentData = self.currentData.get(vehicle.vin, {})
+                    vehicle.tripData = self.tripData.get(vehicle.vin, {})
+                    vehicle.calcLatestTripSumValues(sumType="day")
+                    vehicle.calcLatestTripSumValues(sumType="month")
 
             # Move processed files from 'in_process' folder to 'processed' folder
             loop = asyncio.get_running_loop()
@@ -1245,11 +1269,12 @@ class EUDAConnection:
             if len(filesInProcessDir) > 0:
                 counter = 0
                 for entryName in filesInProcessDir:
-                    os.replace(
-                        os.path.join(self._dataFolderInProcess, entryName),
-                        os.path.join(self._dataFolderProcessed, entryName),
-                    )
-                    counter = counter + 1
+                    if vin is None or vin in entryName:
+                        os.replace(
+                            os.path.join(self._dataFolderInProcess, entryName),
+                            os.path.join(self._dataFolderProcessed, entryName),
+                        )
+                        counter = counter + 1
                 self._LOGGER.debug(
                     f"Moved {counter} files from 'in_process' folder to 'processed' folder."
                 )
@@ -1257,7 +1282,7 @@ class EUDAConnection:
             # Archiving
             if self._lastArchiveTime + timedelta(days=1) < datetime.now(tz=None):
                 # Time to call for archiving
-                if not await self.archiveFiles():
+                if not await self.archiveFiles(vin):
                     _LOGGER.warning(
                         "Call archiveFiles() was not successful. Ignoring this problem."
                     )
@@ -1270,17 +1295,18 @@ class EUDAConnection:
         return False
 
     # async def checkForFilesInProcess(self) -> bool:
-    def checkForFilesInProcess(self) -> bool:
+    def checkForFilesInProcess(self, vin: str | None = None) -> bool:
         try:
             filesInDir = os.listdir(self._dataFolderInProcess)
             if len(filesInDir) > 0:
                 counter = 0
                 for entryName in filesInDir:
-                    os.replace(
-                        os.path.join(self._dataFolderInProcess, entryName),
-                        os.path.join(self._dataFolder, entryName),
-                    )
-                    counter = counter + 1
+                    if vin is None or vin in entryName:
+                        os.replace(
+                            os.path.join(self._dataFolderInProcess, entryName),
+                            os.path.join(self._dataFolder, entryName),
+                        )
+                        counter = counter + 1
                 self._LOGGER.warning(
                     f"Found {counter} files in the 'in_process' folder. Moved them back data folder to process them again."
                 )
@@ -1371,20 +1397,18 @@ class EUDAConnection:
                         GetTimeStampFromFileName("Dummy_20000101000000.json"),
                     )
                     <= timeStamp
-                    and len(dataFromFile.get("Data", []))>0
+                    and len(dataFromFile.get("Data", [])) > 0
                 ):
                     # Time stamp of current file is equal or later than time stamp of self.currentData
                     self.currentData[vin]["timeStamp"] = timeStamp
                     self.currentData[vin]["Data"] = dataFromFile.get("Data", [])
                 else:
-                    if len(dataFromFile.get("Data", []))<1:
-                        self._LOGGER.info(
-                            f"Data list of file {fileName} is empty."
-                        )
+                    if len(dataFromFile.get("Data", [])) < 1:
+                        self._LOGGER.info(f"Data list of file {fileName} is empty.")
                     else:
                         self._LOGGER.info(
                             f"Timestamp of file {fileName} is {timeStamp} which is not newer than"
-                            f"{self.currentData.get(vin, {}).get("timeStamp",GetTimeStampFromFileName("Dummy_20000101000000.json"),)}."
+                            f"{self.currentData.get(vin, {}).get('timeStamp', GetTimeStampFromFileName('Dummy_20000101000000.json'))}."
                         )
             else:
                 self._LOGGER.error(
@@ -1465,7 +1489,7 @@ class EUDAConnection:
                                 element.get("value", "0")
                             )
                     # tripElement['tripEnd']=timeStamp
-                    if len(tripElement) < 6:
+                    if len(tripElement) < 5:
                         self._LOGGER.debug(
                             self.anonymise(
                                 f"tripElement for vehicle {vehicle.vin} has less entries than expected. Only {len(tripElement)}. {tripElement}"
@@ -1516,52 +1540,59 @@ class EUDAConnection:
             )
         return False
 
-    def readTripStatisticsFile(self) -> bool:
+    def readTripStatisticsFile(self, vin: str | None = None) -> bool:
         try:
-            self._LOGGER.debug("Reading trip statistics files if present.")
-            # if self._hass:
-            #    basePath = self._hass.config.path("custom_components/pycupra")
-            # else:
-            #    basePath = "."
-            for vehicle in self.vehicles:
-                csvFileName = os.path.join(
-                    self._dataBasePath, vehicle.vin + "_drivingData.csv"
+            if vin is None:
+                self._LOGGER.debug(
+                    "Reading trip statistics files for all vehicles, if present."
                 )
-                if not os.path.exists(csvFileName):
-                    self._LOGGER.warning(
-                        self.anonymise(
-                            f"Could not find trip statistics file {csvFileName}. So starting without trip statistics history."
-                        )
+            else:
+                self._LOGGER.debug(
+                    self.anonymise(
+                        f"Reading trip statistics file for vehicle {vin}, if present."
                     )
-                else:
-                    with open(csvFileName, newline="") as csvfile:
-                        reader = csv.DictReader(csvfile)
-                        for row in reader:
-                            data: dict[str, Any] = {}
-                            data["startMileage"] = int(row.get("startMileage", "0"))
-                            data["fuelConsumption"] = int(
-                                row.get("fuelConsumption", "0")
+                )
+
+            for vehicle in self.vehicles:
+                if vin is None or vehicle.vin == vin:
+                    csvFileName = os.path.join(
+                        self._dataBasePath, vehicle.vin + "_drivingData.csv"
+                    )
+                    if not os.path.exists(csvFileName):
+                        self._LOGGER.warning(
+                            self.anonymise(
+                                f"Could not find trip statistics file {csvFileName}. So starting without trip statistics history."
                             )
-                            data["electricConsumption"] = int(
-                                row.get("electricConsumption", "0")
-                            )
-                            data["gasConsumption"] = int(
-                                row.get("gasConsumption", "0")
-                            )
-                            data["travelTime"] = int(row.get("travelTime", "0"))
-                            data["distance"] = int(row.get("distance", "0"))
-                            tripEndString = row.get(
-                                "tripEnd", "2000-01-01 00:00:00+01:00"
-                            )
-                            data["tripEnd"] = datetime.strptime(
-                                tripEndString, "%Y-%m-%d %H:%M:%S%z"
-                            ).astimezone(None)
-                            if self.tripData.get(vehicle.vin, None) is None:
-                                self.tripData[vehicle.vin] = {}
-                            self.tripData[vehicle.vin][
-                                int(row.get("startMileage", "0"))
-                            ] = data
-                        csvfile.close()
+                        )
+                    else:
+                        with open(csvFileName, newline="") as csvfile:
+                            reader = csv.DictReader(csvfile)
+                            for row in reader:
+                                data: dict[str, Any] = {}
+                                data["startMileage"] = int(row.get("startMileage", "0"))
+                                data["fuelConsumption"] = int(
+                                    row.get("fuelConsumption", "0")
+                                )
+                                data["electricConsumption"] = int(
+                                    row.get("electricConsumption", "0")
+                                )
+                                data["gasConsumption"] = int(
+                                    row.get("gasConsumption", "0")
+                                )
+                                data["travelTime"] = int(row.get("travelTime", "0"))
+                                data["distance"] = int(row.get("distance", "0"))
+                                tripEndString = row.get(
+                                    "tripEnd", "2000-01-01 00:00:00+01:00"
+                                )
+                                data["tripEnd"] = datetime.strptime(
+                                    tripEndString, "%Y-%m-%d %H:%M:%S%z"
+                                ).astimezone(None)
+                                if self.tripData.get(vehicle.vin, None) is None:
+                                    self.tripData[vehicle.vin] = {}
+                                self.tripData[vehicle.vin][
+                                    int(row.get("startMileage", "0"))
+                                ] = data
+                            csvfile.close()
             return True
         except Exception as error:
             self._LOGGER.error(
@@ -1570,62 +1601,66 @@ class EUDAConnection:
             raise PyCupraException("Error while trying to read trip statistics file")
         return False
 
-    def writeTripStatisticsFile(self) -> bool:
+    def writeTripStatisticsFile(self, vin: str | None = None) -> bool:
         try:
-            # if self._hass:
-            #    basePath = self._hass.config.path("custom_components/pycupra")
-            # else:
-            #    basePath = "."
-            for vehicle in self.vehicles:
-                csvFileName = os.path.join(
-                    self._dataBasePath, vehicle.vin + "_drivingData.csv"
+            if vin is None:
+                self._LOGGER.debug("Writing trip statistics files for all vehicles.")
+            else:
+                self._LOGGER.debug(
+                    self.anonymise(f"Writing trip statistics file for vehicle {vin}.")
                 )
-                if os.path.exists(csvFileName):
-                    os.replace(csvFileName, csvFileName + ".old")
 
-                with open(csvFileName, "w", newline="") as csvfile:
-                    fieldnames = [
-                        "rowNo",
-                        "tripEnd",
-                        "distance",
-                        "startMileage",
-                        "endMileage",
-                        "travelTime",
-                        "fuelConsumption",
-                        "electricConsumption",
-                        "gasConsumption",
-                    ]
-                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                    writer.writeheader()
-                    rowCounter = 0
-                    vehicleTrips = self.tripData.get(vehicle.vin, {})
-                    for tripStartMileage in vehicleTrips:
-                        trip = self.tripData.get(vehicle.vin, {}).get(
-                            tripStartMileage, {}
-                        )
-                        if trip == {}:
-                            self._LOGGER.warning(
-                                f"Did not find trip for start mileage {tripStartMileage}"
+            for vehicle in self.vehicles:
+                if vin is None or vehicle.vin == vin:
+                    csvFileName = os.path.join(
+                        self._dataBasePath, vehicle.vin + "_drivingData.csv"
+                    )
+                    if os.path.exists(csvFileName):
+                        os.replace(csvFileName, csvFileName + ".old")
+
+                    with open(csvFileName, "w", newline="") as csvfile:
+                        fieldnames = [
+                            "rowNo",
+                            "tripEnd",
+                            "distance",
+                            "startMileage",
+                            "endMileage",
+                            "travelTime",
+                            "fuelConsumption",
+                            "electricConsumption",
+                            "gasConsumption",
+                        ]
+                        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                        writer.writeheader()
+                        rowCounter = 0
+                        vehicleTrips = self.tripData.get(vehicle.vin, {})
+                        for tripStartMileage in vehicleTrips:
+                            trip = self.tripData.get(vehicle.vin, {}).get(
+                                tripStartMileage, {}
                             )
-                            return False
-                        writer.writerow(
-                            {
-                                "rowNo": rowCounter,
-                                "tripEnd": trip.get("tripEnd", ""),
-                                "distance": trip.get("distance", 0),
-                                "startMileage": trip.get("startMileage", 0),
-                                "endMileage": trip.get("startMileage", 0)
-                                + trip.get("distance", 0),
-                                "travelTime": trip.get("travelTime", 0),
-                                "fuelConsumption": trip.get("fuelConsumption", 0),
-                                "electricConsumption": trip.get(
-                                    "electricConsumption", 0
-                                ),
-                                "gasConsumption": trip.get("gasConsumption", 0),
-                            }
-                        )
-                        rowCounter = rowCounter + 1
-                    csvfile.close()
+                            if trip == {}:
+                                self._LOGGER.warning(
+                                    f"Did not find trip for start mileage {tripStartMileage}"
+                                )
+                                return False
+                            writer.writerow(
+                                {
+                                    "rowNo": rowCounter,
+                                    "tripEnd": trip.get("tripEnd", ""),
+                                    "distance": trip.get("distance", 0),
+                                    "startMileage": trip.get("startMileage", 0),
+                                    "endMileage": trip.get("startMileage", 0)
+                                    + trip.get("distance", 0),
+                                    "travelTime": trip.get("travelTime", 0),
+                                    "fuelConsumption": trip.get("fuelConsumption", 0),
+                                    "electricConsumption": trip.get(
+                                        "electricConsumption", 0
+                                    ),
+                                    "gasConsumption": trip.get("gasConsumption", 0),
+                                }
+                            )
+                            rowCounter = rowCounter + 1
+                        csvfile.close()
             return True
         except Exception as error:
             self._LOGGER.error(
@@ -1636,20 +1671,21 @@ class EUDAConnection:
             )
         return False
 
-    async def getData(self) -> bool:
-        """ "Reads data like file lists and files for all valid vehicle from the EUDA portal"""
+    async def getData(self, vin: str | None = None) -> bool:
+        """ "Reads data like file lists and files for all valid vehicles from the EUDA portal"""
         try:
-            if len(self.vehicles)>0:
+            if len(self.vehicles) > 0:
                 self._LOGGER.debug(
                     self.anonymise(
-                        f"In getData. self.vehicles={len(self.vehicles)}. First vehicle={self.vehicles[0].vin}"
+                        f"In getData, called for vin={vin}. Number of vehicles={len(self.vehicles)}."
                     )
                 )
             else:
                 self._LOGGER.debug("In getData. Number of vehicles is zero.")
 
             for vehicle in self.vehicles:
-                await self.getDataForOneVehicle(vehicle)
+                if vin is None or vehicle.vin == vin:
+                    await self.getDataForOneVehicle(vehicle)
             return True
         except Exception as e:
             raise PyCupraException(f"getData() encountered an error. Error: {e}")
@@ -1662,8 +1698,8 @@ class EUDAConnection:
             await asyncio.sleep(2)
             data = await self.getDatacluster(EUDA_BASE_URL, vehicle.vin, "all")
             if data == {}:
-                self._LOGGER.info(
-                    "No data cluster of type 'all' found. Can be ignored, because data cluster 'all' is not necessary at the moment."
+                self._LOGGER.debug(
+                    "No data cluster of type 'all' found. Can be ignored, because data cluster 'all' is not necessary."
                 )
             else:
                 vehicle._states.update(data)
@@ -1677,10 +1713,12 @@ class EUDAConnection:
             # Reading information for data cluster 'partial'
             identifier_partial = ""
             counter = 0
-            while counter <3 and identifier_partial == "":
-                if counter>0:
+            while counter < 3 and identifier_partial == "":
+                if counter > 0:
                     await asyncio.sleep(2)
-                    self._LOGGER.debug("Trying to read information about data cluster of type 'partial' again.")
+                    self._LOGGER.debug(
+                        "Trying to read information about data cluster of type 'partial' again."
+                    )
                 data = await self.getDatacluster(EUDA_BASE_URL, vehicle.vin, "partial")
                 if data == {}:
                     self._LOGGER.error("No data cluster of type 'partial' found.")
@@ -1691,8 +1729,10 @@ class EUDAConnection:
                             f"Found data cluster of type 'partial'. Name={vehicle._states.get('partial', {}).get('Name', '')}"
                         )
                     )
-                    identifier_partial = vehicle._states["partial"].get("Identifier", "")
-                counter = counter +1
+                    identifier_partial = vehicle._states["partial"].get(
+                        "Identifier", ""
+                    )
+                counter = counter + 1
 
             if identifier_partial == "":
                 self._LOGGER.warning(
@@ -1702,14 +1742,14 @@ class EUDAConnection:
 
             counter = 0
             fileList: dict = {}
-            while counter <3 and fileList.get("availableDataFiles", []) == []:
-                if counter>0:
+            while counter < 3 and fileList.get("availableDataFiles", []) == []:
+                if counter > 0:
                     await asyncio.sleep(2)
                     self._LOGGER.debug("Trying to read list of available files again.")
                 fileList = await self.getListOfAvailableFiles(
                     EUDA_BASE_URL, vehicle.vin, identifier_partial, "partial"
                 )
-                counter = counter +1
+                counter = counter + 1
             if fileList.get("availableDataFiles", []) != []:
                 for element in fileList.get("availableDataFiles", []):
                     fileName = element.get("name", "")
@@ -1726,11 +1766,15 @@ class EUDAConnection:
                             pass
                         else:
                             counter = 0
-                            fileContent = b''
-                            while counter <3 and len(fileContent) == 0:
-                                if counter>0:
+                            fileContent = b""
+                            while counter < 3 and len(fileContent) == 0:
+                                if counter > 0:
                                     await asyncio.sleep(1)
-                                    self._LOGGER.debug(self.anonymise(f"Trying to reread file {fileName} again."))
+                                    self._LOGGER.debug(
+                                        self.anonymise(
+                                            f"Trying to reread file {fileName} again."
+                                        )
+                                    )
                                 fileContent = await self.getOneDatafile(
                                     fileName,
                                     EUDA_BASE_URL,
@@ -1769,7 +1813,7 @@ class EUDAConnection:
                                     )
                                 self._LOGGER.debug(
                                     self.anonymise(f"Downloaded new file {fileName}.")
-                            )
+                                )
                     else:
                         self._LOGGER.error(
                             "List of available data contains an empty filename."
@@ -1809,10 +1853,10 @@ class EUDAConnection:
     #    spinArray.extend(byteChallenge)
     #    return hashlib.sha512(spinArray).hexdigest()
 
-    def addToAnonymisationDict(self, keyword, replacement) -> None:
+    def addToAnonymisationDict(self, keyword: str, replacement: str) -> None:
         self._anonymisationDict[keyword] = replacement
 
-    def addToAnonymisationKeys(self, keyword) -> None:
+    def addToAnonymisationKeys(self, keyword: str) -> None:
         self._anonymisationKeys.add(keyword)
 
     def anonymise(self, inObj) -> Any:
@@ -1921,7 +1965,7 @@ async def main():
             session, brand="cupra", username="xxx", password="yyy", fulldebug=True
         )
         if await connection.doLogin():
-            if await connection.get_vehicles():
+            if await connection.getVehicles():
                 for vehicle in connection.vehicles:
                     print(f"Vehicle id: {vehicle}")
                     print("Supported sensors:")
