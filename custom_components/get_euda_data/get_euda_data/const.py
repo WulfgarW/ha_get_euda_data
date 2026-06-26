@@ -348,6 +348,7 @@ EUDA_DATA_DICT = {
         "unit": "km",
         "device_class": "distance",
         "key": "30cc36fd-71ca-3c09-9296-e94ebd47bd2b",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "cruising_range_electric": {
@@ -559,16 +560,18 @@ EUDA_DATA_DICT = {
         "attr": "charge_rate",
         "name": "Charge rate",
         "icon": "mdi:flash",
+        "unit": "km/h",
         "key": "1efb6000-6b54-366a-9233-d320699687cf",
+        "unit_key": "9c83ccaa-5288-38da-9d38-81ef8db469b3",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
-    "battery_state_report.charge_rate_unit": {
-        "attr": "charge_rate_unit",
-        "name": "Charge rate unit",
-        "icon": "mdi:flash",
-        "key": "9c83ccaa-5288-38da-9d38-81ef8db469b3",
-        "conversion": None,
-    },
+    #"battery_state_report.charge_rate_unit": {
+    #    "attr": "charge_rate_unit",
+    #    "name": "Charge rate unit",
+    #    "icon": "mdi:flash",
+    #    "key": "9c83ccaa-5288-38da-9d38-81ef8db469b3",
+    #    "conversion": None,
+    #},
     "settings.max_charge_current_ac": {
         "attr": "max_charge_current_ac",
         "name": "Max charge current AC",
@@ -815,4 +818,6 @@ EUDA_DATA_NO_SHOW_SET = (
     "351e9e10-b831-391e-9fc4-ccacc8cd3eba",  # tyre_pressure_differential_spare_tyre
     "a86e735b-5f04-336a-8dc7-8fb189d02cd2",  # tyre_pressure_differential_front_right
     "69729e19-7b1a-3189-8e11-b4b31ab7601a",  # tyre_pressure_differential_front_left
+    "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",  # mileage.unit (already used to set unit for 'Odometer value' entity)
+    "9c83ccaa-5288-38da-9d38-81ef8db469b3",  # battery_state_report.charge_rate_unit (already used for 'Charge rate' entity)
 )

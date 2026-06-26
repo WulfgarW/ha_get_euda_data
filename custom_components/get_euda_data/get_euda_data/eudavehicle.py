@@ -259,6 +259,42 @@ class EUDAVehicle:
                     return element.get("timestampUtc", "unknown")
         return "unknown"
 
+    def getEUDADataFieldUnit(self, key: str) -> str:
+        """Return the unit computed from value of an unit EUDA data field identified by key."""
+        for element in self.currentData.get("Data", []):
+            if element.get("key", "") == key:
+                if "value" in element:
+                    unitInFile = element.get("value", "")
+                    if unitInFile == "MILES":
+                        return "mi"
+                    elif unitInFile == "KM":
+                        return "km"
+                    elif unitInFile == "CHARGE_RATE_UNIT_KM_PER_H":
+                        return "km/h"
+                    elif unitInFile == "CHARGE_RATE_UNIT_KM_PER_MIN":
+                        return "km/min"
+                    elif unitInFile == "CHARGE_RATE_UNIT_MILES_PER_H":
+                        return "mi/h"
+                    elif unitInFile == "CHARGE_RATE_UNIT_MILES_PER_MIN":
+                        return "mi/min"
+                    elif unitInFile == "CHARGE_RATE_UNIT_INVALID":
+                        self._LOGGER.info(
+                            f"Found unit field {key} in EUDA file, but it had the value {unitInFile}."
+                        )
+                        return ""
+                    else:
+                        self._LOGGER.warning(
+                            f"Found unit field {key} in EUDA file, but it had the yet unknown value {unitInFile}. Please open an issue."
+                        )
+                        return ""
+                else:
+                    self._LOGGER.info(
+                        f"Found unit field {key} in EUDA file, but it had no value."
+                    )
+                    return ""
+        self._LOGGER.info(f"Could not find unit field {key} in EUDA file.")
+        return ""
+
     @property
     def getEUDADataAllUndefinedFields(self) -> dict:
         """Return a dictionary of all EUDA data fields found in EUDA files but not defined in EUDA_DATA_DICT."""

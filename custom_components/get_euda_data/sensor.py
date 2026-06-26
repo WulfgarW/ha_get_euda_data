@@ -55,17 +55,28 @@ class PyCupraSensor(PyCupraEntity, SensorEntity):
         # Set state_class during initialization
         if self.instrument.attr in [
             "battery_level",
+            "state_of_charge",
             "adblue_level",
             "fuel_level",
+            "tank_level",
+            "cng_level",
+            "oil_level",
             "charging_time_left",
             "charging_power",
             "charge_rate",
             "distance",
+            "distance_value",
             "electric_range",
             "combustion_range",
             "combined_range",
+            "primary_engine_range",
+            "secondary_engine_range",
             "outside_temperature",
-            "climatisation_time_left",
+            "outside_temperature_indication",
+            "outdoor_temperature",
+            "min_temperature_battery_module",
+            "max_temperature_battery_module",
+            "boardnet_battery_voltage",
         ]:
             self._attr_state_class = SensorStateClass.MEASUREMENT
 

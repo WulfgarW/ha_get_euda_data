@@ -131,7 +131,15 @@ class EUDAInstrument:
 
 class EUDASensor(EUDAInstrument):
     def __init__(
-        self, attr, name, icon, unit=None, device_class=None, key=None, conversion=None
+        self,
+        attr,
+        name,
+        icon,
+        unit=None,
+        device_class=None,
+        key=None,
+        unit_key=None,
+        conversion=None,
     ):
         super().__init__(
             component="sensor",
@@ -142,7 +150,8 @@ class EUDASensor(EUDAInstrument):
             conversion=conversion,
         )
         self.device_class = device_class
-        self.unit = unit
+        self._unit = unit
+        self.unit_key = unit_key
 
     @property
     def is_mutable(self) -> bool:
@@ -162,6 +171,18 @@ class EUDASensor(EUDAInstrument):
     def state(self):
         val = super().state
         return val
+
+    @property
+    def unit(self):
+        if self.unit_key is not None:
+            unit_from_file = self.vehicle.getEUDADataFieldUnit(self.unit_key)
+            if unit_from_file != "":
+                return unit_from_file
+            else:
+                self._LOGGER.info(
+                    f"Could not find valid unit information for {self.name} in EUDA file. Using the default unit."
+                )
+        return self._unit
 
 
 class EUDABinarySensor(EUDAInstrument):
@@ -248,6 +269,7 @@ def create_eudaInstruments():
                 unit=dictElem.get("unit", None),
                 device_class=dictElem.get("device_class", None),
                 key=dictElem.get("key", None),
+                unit_key=dictElem.get("unit_key", None),
                 conversion=dictElem.get("conversion", None),
             )
             instList.append(sensor)
