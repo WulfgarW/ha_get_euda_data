@@ -15,7 +15,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EUDAInstrument:
-    def __init__(self, component, attr, name, icon=None, key=None, conversion=None):
+    def __init__(
+            self, component, attr, name, icon = None, key = None, 
+            conversion = None, values_to_treat_as_unsupported = set()
+        ):
         self.attr = attr
         self.component = component
         self.name = name
@@ -24,6 +27,7 @@ class EUDAInstrument:
         self.callback = None
         self.key = key
         self.conversion = conversion
+        self.values_to_treat_as_unsupported = values_to_treat_as_unsupported
 
     def __repr__(self):
         return self.full_name
@@ -66,7 +70,7 @@ class EUDAInstrument:
 
     @property
     def state(self):
-        if self.vehicle.isEUDADataFieldSupported(self.key):
+        if self.vehicle.isEUDADataFieldSupported(self.key, self.values_to_treat_as_unsupported):
             val = self.vehicle.getEUDADataFieldValue(self.key, self.conversion)
             return val
         else:
@@ -85,7 +89,8 @@ class EUDAInstrument:
             attrs["EUDA field key"] = self.key
         if self.name.startswith("Last long length"):
             if self.vehicle.isEUDADataFieldSupported(
-                EUDA_LONG_TERM_DATA_START_MILEAGE_KEY
+                EUDA_LONG_TERM_DATA_START_MILEAGE_KEY,
+                {}
             ):
                 attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(
                     EUDA_LONG_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT
@@ -93,7 +98,8 @@ class EUDAInstrument:
                 return attrs
         if self.name.startswith("Last short length"):
             if self.vehicle.isEUDADataFieldSupported(
-                EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY
+                EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY,
+                {}
             ):
                 attrs["start mileage"] = self.vehicle.getEUDADataFieldValue(
                     EUDA_SHORT_TERM_DATA_START_MILEAGE_KEY, EUDA_DATA_CONVERSION_INT
@@ -121,7 +127,7 @@ class EUDAInstrument:
     @property
     def is_supported(self):
         try:
-            return self.vehicle.isEUDADataFieldSupported(self.key)
+            return self.vehicle.isEUDADataFieldSupported(self.key, self.values_to_treat_as_unsupported)
         except Exception as error:
             self._LOGGER.error(
                 f"An error occurred when checking if {self.attr} is supported. Error: {error}"
@@ -195,6 +201,7 @@ class EUDABinarySensor(EUDAInstrument):
         reverse_state=False,
         key=None,
         conversion=None,
+        values_to_treat_as_unsupported = set()
     ):
         super().__init__(
             component="binary_sensor",
@@ -203,6 +210,7 @@ class EUDABinarySensor(EUDAInstrument):
             icon=icon,
             key=key,
             conversion=conversion,
+            values_to_treat_as_unsupported = values_to_treat_as_unsupported
         )
         self.device_class = device_class
         self.reverse_state = reverse_state
@@ -259,6 +267,7 @@ def create_eudaInstruments():
                 key=dictElem.get("key", None),
                 conversion=dictElem.get("conversion", None),
                 reverse_state=dictElem.get("reverse_state", False),
+                values_to_treat_as_unsupported=dictElem.get("values_to_treat_as_unsupported", set())
             )
             instList.append(binary_sensor)
         else:

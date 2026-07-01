@@ -443,14 +443,6 @@ class PyCupraEntity(Entity):
             else f"{self.vehicle.model}",
         )
 
-        # Return model image as picture attribute for position entity
-        if "position" in self.attribute:
-            # Try to use small thumbnail first hand, else fallback to fullsize
-            if self.vehicle.is_model_image_small_supported:
-                attributes["entity_picture"] = self.vehicle.model_image_small
-            elif self.vehicle.is_model_image_large_supported:
-                attributes["entity_picture"] = self.vehicle.model_image_large
-
         return attributes
 
     @property
@@ -461,7 +453,7 @@ class PyCupraEntity(Entity):
             "name": self._vehicle_name,
             "manufacturer": self.vehicle.brand,
             "model": self.vehicle.model,
-            "sw_version": self.vehicle.model_year,
+            "sw_version": None,
         }
 
     @property

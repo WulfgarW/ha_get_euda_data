@@ -228,7 +228,7 @@ class EUDAVehicle:
             return 0
         return ""
 
-    def isEUDADataFieldSupported(self, key: str) -> bool:
+    def isEUDADataFieldSupported(self, key: str, values_to_treat_as_unsupported: set) -> bool:
         """Return true if the EUDA data field identified by key is supported."""
         if key == "00000000-0000-0000-0000-0000":
             return True
@@ -241,7 +241,8 @@ class EUDAVehicle:
         for element in self.currentData.get("Data", []):
             if element.get("key", "") == key:
                 if "value" in element:
-                    return True
+                    if element.get("value", "") not in values_to_treat_as_unsupported:
+                        return True
         return False
 
     @property

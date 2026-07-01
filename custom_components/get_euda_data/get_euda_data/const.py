@@ -420,6 +420,7 @@ EUDA_DATA_DICT = {
         "key": "bc9bbc65-8461-30eb-88db-f94148552a20",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
         # "reverse_state": True,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "open_state_rear_left_door": {
         "attr": "door_closed_left_back",
@@ -428,6 +429,7 @@ EUDA_DATA_DICT = {
         "device_class": "door",
         "key": "bf62dd10-b184-3425-a64c-c50b09420bc3",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "open_state_front_right_door": {
         "attr": "door_closed_right_front",
@@ -436,6 +438,7 @@ EUDA_DATA_DICT = {
         "device_class": "door",
         "key": "0bb971a6-12ef-3382-9b99-5ed0a52f18e9",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "open_state_rear_right_door": {
         "attr": "door_closed_right_back",
@@ -444,6 +447,7 @@ EUDA_DATA_DICT = {
         "device_class": "door",
         "key": "60c81e02-4825-3aab-8da8-b8b07f251623",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "open_state_tailgate": {
         "attr": "trunk_closed",
@@ -451,6 +455,7 @@ EUDA_DATA_DICT = {
         "device_class": "door",
         "key": "dbb8f3b1-2bc9-3afc-a1d5-61f1eb04d1c4",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "open_state_front_engine_bonnet": {
         "attr": "hood_closed",
@@ -458,6 +463,7 @@ EUDA_DATA_DICT = {
         "device_class": "door",
         "key": "e1c6d420-b439-3de6-a5b7-d0b474cc2752",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "state_sunroof_motor_hood_1": {
         "attr": "sunroof_closed",
@@ -465,6 +471,7 @@ EUDA_DATA_DICT = {
         "device_class": "window",
         "key": "cff28415-8084-34e0-ad91-db191e5ff3b6",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "state_rear_right_door_window_lifter": {
         "attr": "window_closed_right_back",
@@ -472,6 +479,7 @@ EUDA_DATA_DICT = {
         "device_class": "window",
         "key": "3ef13c1d-7e08-3cf4-b501-a8bda80cff78",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "state_front_right_door_window_lifter": {
         "attr": "window_closed_right_front",
@@ -479,6 +487,7 @@ EUDA_DATA_DICT = {
         "device_class": "window",
         "key": "5fcf7d27-6b76-3de0-9ce9-f207370cdaff",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "state_rear_left_door_window_lifter": {
         "attr": "window_closed_left_back",
@@ -486,6 +495,7 @@ EUDA_DATA_DICT = {
         "device_class": "window",
         "key": "5fb120bb-ab59-38fc-8e03-9ae197c7a1ae",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "state_front_left_door_window_lifter": {
         "attr": "window_closed_left_front",
@@ -493,6 +503,39 @@ EUDA_DATA_DICT = {
         "device_class": "window",
         "key": "60a4f436-5534-32f4-b4cc-b5a88a9d4b91",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
+    },
+    "position_rear_right_door_window_lifter": {
+        "attr": "window_lifter_position_right_back",
+        "name": "Window lifter position right back",
+        "unit": "%",
+        "device_class": "window",
+        "key": "0bf3d84a-9164-3d1c-8191-ca6dbce848a7",
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
+    "position_front_right_door_window_lifter": {
+        "attr": "window_lifter_position_right_front",
+        "name": "Window lifter position right front",
+        "unit": "%",
+        "device_class": "window",
+        "key": "57cb3a0e-e9f1-32d1-bf19-dd5970230699",
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
+    "position_rear_left_door_window_lifter": {
+        "attr": "window_lifter_position_left_back",
+        "name": "Window lifter position left back",
+        "unit": "%",
+        "device_class": "window",
+        "key": "0543e58f-cd49-3e63-9e00-3b2d27043a25",
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
+    "position_front_left_door_window_lifter": {
+        "attr": "window_lifter_position_left_front",
+        "name": "Window lifter position left front",
+        "unit": "%",
+        "device_class": "window",
+        "key": "60fddd42-f4fe-3382-ba31-f04ce52d2ab4",
+        "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "charging_state": {
         "attr": "charging_state",
@@ -675,6 +718,7 @@ EUDA_DATA_DICT = {
         "device_class": "light",
         "key": "c17ead4f-09b8-357f-ac2b-38c448ab88c4",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "parking_light_left": {
         "attr": "parking_light_left",

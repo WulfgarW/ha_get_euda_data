@@ -12,7 +12,7 @@ This integration will only work for your car(s), if you have done the necessary 
 
 - And you should see an entity 'Other fields found'. The value shown for this entity is the number of fields found in your current EUDA file, for which there is no entity defined at the moment. And if you open the details for the 'Other fields found' entity, you see the name of these fields and the current value (as text) in the entity attributes.
 - If you see 'interesting' fields in the attributes of the 'Other fields found' entity, reload your device (via Settings>Devices&Services>Get_EUDA_Data, click on the three vertical points right from the cogwheel and chosse 'Reload').
-- It can happen, that a field, that was available in the current EUDA file when you reloaded you Get_EUDA_Data device is not always present in other EUDA files for your vehicle. E.g. some fields are only available, while your vehicle is charging. So don't be surprised, when you see 'Unavailable' for some entities.
+- It can happen, that a field, that was available in the current EUDA file when you reloaded you Get_EUDA_Data device is not always present in other EUDA files for your vehicle. E.g. some fields are only available, while your vehicle is charging. So don't be surprised, when you see 'Unavailable' for some entities. It is possible, that you find fields like "state_sunroof_motor_hood_1" in your EUDA files, although your vehicle has no sunroof. The field value "0" means "unsupported", the field value "1" means "invalid". For such fields, Get_EUDA_Data will treat the values "0" and "1" as if the field is not available.
 - In contrast to PyCupra and similar integrations, that communicated with the brands API, that the official mobile phone apps of your brand are using, Get_EUDA_Data can only read data for your vehicle, it cannot change any vehicle setting.
 
 ### How to use the driving data sum files
@@ -32,7 +32,7 @@ This integration will only work for your car(s), if you have done the necessary 
 - Now choose your brand and click "Login" and then "Continue" on the follwoing page.
 - You will be redirected to the login page of Seat (yes also for Cupra users) and login there.
 
-### Choose your vehicle, allow acces and set up a customised data request
+### Choose your vehicle, allow access and set up a customised data request
 - After a successful login, you will be redirected back to the EU Data Act portal.
 - You see a list of your connected vehicles (only one for most of you).
 - Click on "Vehicle details" for your vehicle.
