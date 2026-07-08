@@ -1490,11 +1490,12 @@ class EUDAConnection:
                             )
                     # tripElement['tripEnd']=timeStamp
                     if len(tripElement) < 5:
-                        self._LOGGER.debug(
-                            self.anonymise(
-                                f"tripElement for vehicle {vehicle.vin} has less entries than expected. Only {len(tripElement)}. {tripElement}"
+                        if len(tripElement) > 0:
+                            self._LOGGER.debug(
+                                self.anonymise(
+                                    f"tripElement for vehicle {vehicle.vin} has less entries than expected. Only {len(tripElement)}. {tripElement}"
+                                )
                             )
-                        )
                     else:
                         if (
                             self.tripData.get(vehicle.vin, {}).get(

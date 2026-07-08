@@ -23,7 +23,7 @@
         "description": "Specify additional monitoring settings.",
         "data": {
           "resources": "Resources to monitor.",
-          "update_interval": "Poll frequency (minutes).",
+          "update_interval": "Poll frequency (seconds).",
           "debug": "Full API debug logging (requires debug logging enabled in configuration.yaml)",
           "log_prefix": "Short log prefix for this Get EUDA Data instance (e.g. 1)"
         }
@@ -57,7 +57,7 @@
         "title": "Options for Get EUDA Data",
         "description": "Configure update interval",
         "data": {
-          "update_interval": "Poll frequency (minutes)",
+          "update_interval": "Poll frequency (seconds)",
           "resources": "Resources to monitor.",
           "debug": "Full API debug logging (requires debug logging enabled in configuration.yaml)",
           "log_prefix": "Short log prefix for this Get EUDA Data instance (e.g. 1)"

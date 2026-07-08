@@ -86,3 +86,4 @@ logger:
  ```
 ## Further help or contributions
 For questions, further help or contributions you can join the (V.A.G. Connected Cars) Discord server at https://discord.gg/826X9jEtCh
+And I would be glad for help on the translation of the messages and forms of Get EUDA Data to other languages.

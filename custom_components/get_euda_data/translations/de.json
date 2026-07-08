@@ -1,0 +1,68 @@
+{
+  "title": "Get EUDA Data",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfiguration von Get_EUDA_Data",
+        "description": "Geben Sie Ihre Kontoinformationen ein.",
+        "data": {
+          "brand": "Marke",
+          "username": "Benutzername",
+          "password": "Passwort"
+        }
+      },
+      "vehicle": {
+        "title": "Fahrzeugeinstellungen",
+        "description": "Das/die folgende(n) Fahrzeug(e) wurde/wurden gefunden. Bitte wähle das zu überwachende Fahrzeug und dessen Einstellungen aus.",
+        "data": {
+          "vehicle": "FIN-Nummer"
+        }
+      },
+      "monitoring": {
+        "title": "Überwachungseinstellungen",
+        "description": "Lege zusätzliche Überwachungseinstellungen fest.",
+        "data": {
+          "resources": "Zu überwachende Ressourcen.",
+          "update_interval": "Abfragehäufigkeit (Sekunden).",
+          "debug": "Vollständiges API Debug Logging (erfordert die Aktivierung von Debug Logging im configuration.yaml).",
+          "log_prefix": "Kurzer Log-Präfix für diese Get_EUDA_Data-Instanz (z.B. 1)"
+        }
+      },
+      "reauth_confirm": {
+        "description": "Authentifiziere dich erneut mit deinem Konto.\nStelle sicher, dass du alle neuen EULAs im drivesomethinggreater-Portal akzeptierst, bevor du fortfährst.",
+        "data": {
+          "brand": "Marke",
+          "email": "Benutzername (E-Mailadresse)",
+          "password": "Passwort"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Auto mit dieser FIN ist bereits konfiguriert.",
+      "reauth_successful": "Die erneute Authentifizierung war erfolgreich."
+    },
+    "error": {
+      "cannot_connect": "Anmeldung beim EU-Data-Act-Portal nicht möglich, bitte überprüfe deine Zugangsdaten und vergewissern dich, dass der Dienst funktioniert",
+      "cannot_update": "Datenaktualisierung vom EU-Data-Act-Portal nicht erfolgreich.",
+      "unknown": "Unbekannter Fehler"
+    },
+    "progress": {
+      "task_login": "Anmeldung beim EU-Data-Act-Portal",
+      "task_update": "Fahrzeuge abfragen"
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Optionen für Get EUDA Data",
+        "description": "Einstellungen konfigurieren",
+        "data": {
+          "update_interval": "Abfragehäufigkeit (Sekunden).",
+          "resources": "Zu überwachende Ressourcen.",
+          "debug": "Vollständiges API Debug Logging (erfordert die Aktivierung von Debug Logging im configuration.yaml).",
+          "log_prefix": "Kurzer Log-Präfix für diese Get_EUDA_Data-Instanz (z.B. 1)"
+        }
+      }
+    }
+  }
+}

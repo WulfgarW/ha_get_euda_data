@@ -175,7 +175,7 @@ EUDA_DATA_DICT = {
         "name": "Parking brake",
         "icon": "mdi:car-brake-parking",
         # "unit": "%",
-        "device_class": "door",
+        #"device_class": "door",
         "key": "f8bbe94d-06e1-3311-bf8f-c0c99cc67d48",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
@@ -411,6 +411,50 @@ EUDA_DATA_DICT = {
         "device_class": "lock",
         "key": "bd917b58-82bd-3c34-a006-747ca5aec03d",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "locked_state_front_left_door": {
+        "attr": "door_locked_left_front",
+        "name": "Door locked left front",
+        "device_class": "lock",
+        "key": "db6919e8-430a-35dc-a930-14d289be6985",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "locked_state_rear_left_door": {
+        "attr": "door_locked_left_back",
+        "name": "Door locked left back",
+        "device_class": "lock",
+        "key": "fc0dab76-59ca-31bd-8845-e4b39d485b71",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "locked_state_front_right_door": {
+        "attr": "door_locked_right_front",
+        "name": "Door locked right front",
+        "device_class": "lock",
+        "key": "21e084ad-51bf-3461-a521-49a544720c91",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "locked_state_rear_right_door": {
+        "attr": "door_locked_right_back",
+        "name": "Door locked right back",
+        "device_class": "lock",
+        "key": "6e36232f-4c55-3688-9948-a3a6ae056db1",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "locked_state_front_engine_bonnet": {
+        "attr": "hood_locked",
+        "name": "Hood locked",
+        "device_class": "lock",
+        "key": "937bf8d6-bd3e-306e-af30-8a8a4cc14644",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
+    },
+    "locked_state_tailgate": {
+        "attr": "trunk_locked",
+        "name": "Trunk locked",
+        "device_class": "lock",
+        "key": "95380872-847c-39d7-857f-17cdea1579ce",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+        "values_to_treat_as_unsupported": {"0", "1"},
     },
     "open_state_front_left_door": {
         "attr": "door_closed_left_front",
@@ -857,11 +901,11 @@ EUDA_DATA_NO_SHOW_SET = (
     "0f43f2e7-3556-36a9-8271-a60bc54afad8",  # echo
     "7e35b2a4-8f31-30a7-848d-3af7bb1c5e55",  # fuel_level__accuracy
     "173589ce-e437-3c6e-a0ec-6df704586fd7",  # trueness
-    "d7d35c0a-706c-3f28-a61a-c3b002116a25",  # tyre_pressure_differential_rear_right
-    "a59fa6dd-c0e8-35af-afc0-1f411c33c78c",  # tyre_pressure_differential_rear_left
-    "351e9e10-b831-391e-9fc4-ccacc8cd3eba",  # tyre_pressure_differential_spare_tyre
-    "a86e735b-5f04-336a-8dc7-8fb189d02cd2",  # tyre_pressure_differential_front_right
-    "69729e19-7b1a-3189-8e11-b4b31ab7601a",  # tyre_pressure_differential_front_left
+    #"d7d35c0a-706c-3f28-a61a-c3b002116a25",  # tyre_pressure_differential_rear_right
+    #"a59fa6dd-c0e8-35af-afc0-1f411c33c78c",  # tyre_pressure_differential_rear_left
+    #"351e9e10-b831-391e-9fc4-ccacc8cd3eba",  # tyre_pressure_differential_spare_tyre
+    #"a86e735b-5f04-336a-8dc7-8fb189d02cd2",  # tyre_pressure_differential_front_right
+    #"69729e19-7b1a-3189-8e11-b4b31ab7601a",  # tyre_pressure_differential_front_left
     "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",  # mileage.unit (already used to set unit for 'Odometer value' entity)
     "9c83ccaa-5288-38da-9d38-81ef8db469b3",  # battery_state_report.charge_rate_unit (already used for 'Charge rate' entity)
 )
