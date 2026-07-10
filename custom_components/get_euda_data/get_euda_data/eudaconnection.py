@@ -1382,6 +1382,13 @@ class EUDAConnection:
                     )
                 )
                 return False
+            if len(dataFromFile.get("Data", [])) == 0:
+                self._LOGGER.debug(
+                    self.anonymise(
+                        f"Data section of file '{fileObj.name}' is empty."
+                    )
+                )
+                return False
             # self._LOGGER.debug('Copying data from single file to raw data dict.')
             vin = GetVINFromFileName(fileName)
             timeStamp = GetTimeStampFromFileName(fileName)

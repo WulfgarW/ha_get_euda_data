@@ -552,7 +552,7 @@ EUDA_DATA_DICT = {
     "position_rear_right_door_window_lifter": {
         "attr": "window_lifter_position_right_back",
         "name": "Window lifter position right back",
-        "unit": "%",
+        "unit": "% open",
         "device_class": "window",
         "key": "0bf3d84a-9164-3d1c-8191-ca6dbce848a7",
         "conversion": EUDA_DATA_CONVERSION_INT,
@@ -560,7 +560,7 @@ EUDA_DATA_DICT = {
     "position_front_right_door_window_lifter": {
         "attr": "window_lifter_position_right_front",
         "name": "Window lifter position right front",
-        "unit": "%",
+        "unit": "% open",
         "device_class": "window",
         "key": "57cb3a0e-e9f1-32d1-bf19-dd5970230699",
         "conversion": EUDA_DATA_CONVERSION_INT,
@@ -568,7 +568,7 @@ EUDA_DATA_DICT = {
     "position_rear_left_door_window_lifter": {
         "attr": "window_lifter_position_left_back",
         "name": "Window lifter position left back",
-        "unit": "%",
+        "unit": "% open",
         "device_class": "window",
         "key": "0543e58f-cd49-3e63-9e00-3b2d27043a25",
         "conversion": EUDA_DATA_CONVERSION_INT,
@@ -576,7 +576,7 @@ EUDA_DATA_DICT = {
     "position_front_left_door_window_lifter": {
         "attr": "window_lifter_position_left_front",
         "name": "Window lifter position left front",
-        "unit": "%",
+        "unit": "% open",
         "device_class": "window",
         "key": "60fddd42-f4fe-3382-ba31-f04ce52d2ab4",
         "conversion": EUDA_DATA_CONVERSION_INT,
