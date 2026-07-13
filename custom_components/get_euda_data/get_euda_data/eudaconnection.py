@@ -1319,16 +1319,15 @@ class EUDAConnection:
 
     async def processSingleFile(self, fileObj):
         try:
-            if await self.extractInformationFromFile(fileObj):
-                os.rename(
-                    fileObj.path, os.path.join(self._dataFolderInProcess, fileObj.name)
-                )
-            else:
-                self._LOGGER.info(
+            if not await self.extractInformationFromFile(fileObj):
+                self._LOGGER.debug(
                     self.anonymise(
-                        f"extractInformationFromFile not successful for '{fileObj.name}'. Keeping the file"
+                        f"extractInformationFromFile not successful for '{fileObj.name}'. Detailed information already logged."
                     )
                 )
+            os.rename(
+                fileObj.path, os.path.join(self._dataFolderInProcess, fileObj.name)
+            )
         except Exception as e:
             raise PyCupraException(
                 f"processSingleFile() encountered an error. Error: {e}"
@@ -1376,14 +1375,14 @@ class EUDAConnection:
             else:
                 dataFromFile, fileName = await self.readDataFile(fileObj)
             if not dataFromFile:
-                self._LOGGER.debug(
+                self._LOGGER.info(
                     self.anonymise(
                         f"Could not read data file '{fileObj.name}' or it is empty."
                     )
                 )
                 return False
             if len(dataFromFile.get("Data", [])) == 0:
-                self._LOGGER.debug(
+                self._LOGGER.info(
                     self.anonymise(
                         f"Data section of file '{fileObj.name}' is empty."
                     )
