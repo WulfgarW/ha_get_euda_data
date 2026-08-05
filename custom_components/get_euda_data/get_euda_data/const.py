@@ -358,6 +358,7 @@ EUDA_DATA_DICT = {
         "unit": "km",
         "device_class": "distance",
         "key": "0ca40e18-0564-3eda-bcc0-7aee9ef44f04",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "cruising_range_combined": {
@@ -367,6 +368,7 @@ EUDA_DATA_DICT = {
         "unit": "km",
         "device_class": "distance",
         "key": "153e8c40-4c6c-3c17-a11b-0ecc35d55b81",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "cruising_range_primary_engine": {
@@ -376,6 +378,7 @@ EUDA_DATA_DICT = {
         "unit": "km",
         "device_class": "distance",
         "key": "55e0d40b-38ed-3cb5-9dcd-6193df6fc493",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "cruising_range_secondary_engine": {
@@ -385,6 +388,7 @@ EUDA_DATA_DICT = {
         "unit": "km",
         "device_class": "distance",
         "key": "3dedefab-8ded-3f5a-907f-d5e9970720bf",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "scr_range": {
@@ -394,6 +398,7 @@ EUDA_DATA_DICT = {
         "unit": "km",
         "device_class": "distance",
         "key": "b43ff74c-2505-3a38-bf98-78c817fbaf96",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "lock_state": {
