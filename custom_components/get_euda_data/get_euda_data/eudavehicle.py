@@ -178,6 +178,8 @@ class EUDAVehicle:
                             return True
                         elif element.get("value", "") == "charging":
                             return True
+                        elif element.get("value", "") == "chargingHvBattery":
+                            return True
                         elif element.get("value", "") == "1" and element.get(
                             "dataFieldName", ""
                         ).startswith("parking_brake"):

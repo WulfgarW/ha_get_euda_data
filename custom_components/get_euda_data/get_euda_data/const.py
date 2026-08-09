@@ -614,6 +614,13 @@ EUDA_DATA_DICT = {
         "key": "97c7b448-13e7-3266-a6be-7487caf1a354",
         "conversion": None,
     },
+    "charge_mode": {
+        "attr": "charge_mode_2",
+        "name": "Charge mode 2",
+        "icon": "mdi:battery",
+        "key": "b4d5d426-faea-37fd-8274-8fd4a386e535",
+        "conversion": None,
+    },
     "charging_state_report.charge_mode": {
         "attr": "charge_mode",
         "name": "Charge mode",
@@ -677,6 +684,14 @@ EUDA_DATA_DICT = {
         "icon": "mdi:battery",
         "device_class": "plug",
         "key": "c111830c-f959-30d2-859a-ea996190d864",
+        "conversion": EUDA_DATA_CONVERSION_BOOL,
+    },
+    "charging_plug1_connectionstate": {
+        "attr": "charge_cable_connected",
+        "name": "Charge cable connected",
+        "icon": "mdi:battery",
+        "device_class": "plug",
+        "key": "37d8c0c0-9677-3823-8b32-d0a5001cb0d0",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
     "external_power_supply_state": {

@@ -51,8 +51,8 @@ This integration will only work for your car(s), if you have done the necessary 
 ## Installation
 
 ### Installation with HACS
-If you have HACS (Home Assistant Community Store) installed, go to the tab HACS on the Home Assistant UI.  Click on the three vertical points on the top and right of the screen and choose 'Custom repositories'. 
-Enter 'https://github.com/WulfgarW/ha_get_euda_data' as repository and choose the type 'integration' and click on 'Add'. When HACS has loaded the repository information, leave this submenu with cancel. Now you can enter 'euda' in the search field and should find 'Get EUDA Data'. Click on the three vertical points and choose 'Download'.
+If you have HACS (Home Assistant Community Store) installed, go to the tab HACS on the Home Assistant UI.  Click on the search filed and search for 'Get_EUDA_Data' or parts of this. 
+You should see 'Get_EUDA_Data' in the list of matches. By clicking on it, you will see this README.md. Click on the 'Download' button in the lower right corner. Restart Home Assistant.
 After that, you can go to Settings>Devices&Services, choose 'Add integration' and search for 'Get_EUDA_Data'.
 
 ### Manual installation
