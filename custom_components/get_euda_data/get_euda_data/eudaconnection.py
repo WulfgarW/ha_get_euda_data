@@ -1333,7 +1333,7 @@ class EUDAConnection:
                 f"processSingleFile() encountered an error. Error: {e}"
             )
 
-    async def readDataFile(self, fileObj):
+    def readDataFile(self, fileObj):
         try:
             if fileObj.is_file():
                 with open(fileObj, mode="r") as f:
@@ -1347,7 +1347,7 @@ class EUDAConnection:
             self._LOGGER.warning(f"readDataFile() not successful. Error: {e}")
             return None, ""
 
-    async def readZipFile(self, zipFileObj):
+    def readZipFile(self, zipFileObj):
         try:
             with ZipFile(zipFileObj) as fzip:
                 if len(fzip.namelist()) < 1:
@@ -1371,9 +1371,21 @@ class EUDAConnection:
         try:
             if fileObj.path.find(".zip") > 0:
                 # fileObj is a zip file
-                dataFromFile, fileName = await self.readZipFile(fileObj)
+                #dataFromFile, fileName = await self.readZipFile(fileObj)
+                loop = asyncio.get_running_loop()
+                dataFromFile, fileName = await loop.run_in_executor(
+                    None,
+                    self.readZipFile,
+                    fileObj,
+                )
             else:
-                dataFromFile, fileName = await self.readDataFile(fileObj)
+                #dataFromFile, fileName = await self.readDataFile(fileObj)
+                loop = asyncio.get_running_loop()
+                dataFromFile, fileName = await loop.run_in_executor(
+                    None,
+                    self.readDataFile,
+                    fileObj,
+                )
             if not dataFromFile:
                 self._LOGGER.info(
                     self.anonymise(
