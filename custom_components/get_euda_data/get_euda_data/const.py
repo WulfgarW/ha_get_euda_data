@@ -755,7 +755,7 @@ EUDA_DATA_DICT = {
         "unit": "kWh",
         # "device_class": "temperature",
         "key": "09ed1319-7b17-31c6-ba74-817ce91a4c1d",
-        "conversion": EUDA_DATA_CONVERSION_FLOAT,
+        "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
     "energy_contents.current_energy_content.physical_value": {
         "attr": "current_energy_content_physical",
@@ -764,7 +764,7 @@ EUDA_DATA_DICT = {
         "unit": "kWh",
         # "device_class": "temperature",
         "key": "84e64812-6eaa-3477-b587-0c5b02d8446f",
-        "conversion": EUDA_DATA_CONVERSION_FLOAT,
+        "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
     "slope_consumption_values.ascent_slope_consumption.physical_value": {
         "attr": "ascent_slope_consumption_physical",
