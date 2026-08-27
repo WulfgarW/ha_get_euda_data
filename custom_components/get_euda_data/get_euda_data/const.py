@@ -781,7 +781,7 @@ EUDA_DATA_DICT = {
         "icon": "mdi:battery",
         "unit": "kWh",
         "key": "84e64812-6eaa-3477-b587-0c5b02d8446f",
-        "conversion": EUDA_DATA_CONVERSION_FLOAT,
+        "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
     "slope_consumption_values.ascent_slope_consumption.physical_value": {
         "attr": "ascent_slope_consumption_physical",
