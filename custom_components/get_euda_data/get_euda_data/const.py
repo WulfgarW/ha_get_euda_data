@@ -323,6 +323,15 @@ EUDA_DATA_DICT = {
         "key": "506cb83e-f99f-3af3-bbeb-0429b69a78d9",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
+    "battery_level_HV.value": {
+        "attr": "battery_level_hv",
+        "name": "Battery level HV",
+        "icon": "mdi:battery",
+        "unit": "%",
+        "device_class": "battery",
+        "key": "ac1108b1-b8cc-3db9-a663-03d387e42223",
+        "conversion": EUDA_DATA_CONVERSION_FLOAT,
+    },
     "settings.target_soc": {
         "attr": "target_state_of_charge",
         "name": "Target state of charge",
@@ -389,6 +398,16 @@ EUDA_DATA_DICT = {
         "device_class": "distance",
         "key": "3dedefab-8ded-3f5a-907f-d5e9970720bf",
         "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
+    "estimatedcruisingrangeprimary.value": {
+        "attr": "primary_engine_range_estimated",
+        "name": "Primary engine range estimated",
+        "icon": "mdi:car",
+        "unit": "km",
+        "device_class": "distance",
+        "key": "b9c90aa6-9495-362c-99c2-1963f8bcfe7b",
+        "unit_key": "a270f8d2-266d-378b-b7e7-b41d77f1dcc7",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "scr_range": {
@@ -753,16 +772,14 @@ EUDA_DATA_DICT = {
         "name": "Max energy content physical",
         "icon": "mdi:battery",
         "unit": "kWh",
-        # "device_class": "temperature",
         "key": "09ed1319-7b17-31c6-ba74-817ce91a4c1d",
-        "conversion": EUDA_DATA_CONVERSION_FLOAT,
+        "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
     "energy_contents.current_energy_content.physical_value": {
         "attr": "current_energy_content_physical",
         "name": "Current energy content physical",
         "icon": "mdi:battery",
         "unit": "kWh",
-        # "device_class": "temperature",
         "key": "84e64812-6eaa-3477-b587-0c5b02d8446f",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -771,7 +788,6 @@ EUDA_DATA_DICT = {
         "name": "Ascent slope consumption physical",
         "icon": "mdi:battery",
         # "unit": "kWh",
-        # "device_class": "temperature",
         "key": "45df4e5a-c2e3-3588-b917-e572ef5ac213",
         "conversion": EUDA_DATA_CONVERSION_FLOAT,
     },
@@ -817,6 +833,16 @@ EUDA_DATA_DICT = {
         "device_class": "duration",
         "key": "7405c11f-4d20-36d2-8381-18364aa1f444",
         "conversion": EUDA_DATA_CONVERSION_INT,
+    },
+    "remaining_time_finished.remaining_time_finished_value": {
+        "attr": "charging_time_remaining_until_finished",
+        "name": "Charging time remaining until finished",
+        "icon": "mdi:battery-charging-100",
+        "unit": "min",
+        "device_class": "duration",
+        "key": "0901e6d5-9c06-39a2-bfab-dd9338c60352",
+        "unit_key": "6f7f6a6d-b459-3930-bec5-7ac450dab69d",
+            "conversion": EUDA_DATA_CONVERSION_INT,
     },
     "other_fields_found": {
         "attr": "other_fields_found",
@@ -928,4 +954,5 @@ EUDA_DATA_NO_SHOW_SET = (
     #"69729e19-7b1a-3189-8e11-b4b31ab7601a",  # tyre_pressure_differential_front_left
     "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",  # mileage.unit (already used to set unit for 'Odometer value' entity)
     "9c83ccaa-5288-38da-9d38-81ef8db469b3",  # battery_state_report.charge_rate_unit (already used for 'Charge rate' entity)
+    "6f7f6a6d-b459-3930-bec5-7ac450dab69d",  # remaining_time_finished.remaining_time_finished_unit (already used for 'Charging time remaining until finished')
 )

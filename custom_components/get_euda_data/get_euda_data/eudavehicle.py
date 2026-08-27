@@ -188,10 +188,18 @@ class EUDAVehicle:
                             "dataFieldName", ""
                         ).startswith("locked_state"):
                             return True
+                        elif element.get("value", "") in ("0", "1") and element.get(
+                            "dataFieldName", ""
+                        ).startswith("locked_state"):
+                            return None  # None means 'Unknown'
                         elif element.get("value", "") == "3" and element.get(
                             "dataFieldName", ""
                         ).startswith("open_state"):
                             return True
+                        elif element.get("value", "") in ("0", "1") and element.get(
+                            "dataFieldName", ""
+                        ).startswith("open_state"):
+                            return None  # None means 'Unknown'
                         elif element.get("value", "") == "3" and element.get(
                             "dataFieldName", ""
                         ).startswith("state_sunroof"):
@@ -210,8 +218,13 @@ class EUDAVehicle:
                             "dataFieldName", ""
                         ):
                             return True
+                        elif element.get("value", "") in (
+                            "0",
+                            "1",
+                        ) and "window_lifter" in element.get("dataFieldName", ""):
+                            return None  # None means 'Unknown'
                     elif conversion == EUDA_DATA_CONVERSION_DIVIDE_BY_10:
-                        return int(element.get("value", "0")) / 10
+                        return float(element.get("value", "0.0")) / 10
                     elif conversion == EUDA_DATA_CONVERSION_KELVIN_TO_CELSIUS:
                         return (
                             float(element.get("value", "0.0")) / 10 - 273.1
@@ -235,7 +248,7 @@ class EUDAVehicle:
         return ""
 
     def isEUDADataFieldSupported(
-        self, key: str, values_to_treat_as_unsupported: set
+        self, key: str, values_to_treat_as_unsupported: set = set()
     ) -> bool:
         """Return true if the EUDA data field identified by key is supported."""
         if key == "00000000-0000-0000-0000-0000":

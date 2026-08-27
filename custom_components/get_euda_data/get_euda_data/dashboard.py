@@ -232,8 +232,9 @@ class EUDABinarySensor(EUDAInstrument):
     @property
     def str_state(self):
         if self.state is None:
-            self._LOGGER.error(f"Can not encode state {self.attr} {self.state}")
-            return None
+            #self._LOGGER.error(f"Can not encode state {self.attr} {self.state}")
+            #return None
+            return "Unknown"
         if self.device_class in ["door", "window"]:
             return "Closed" if self.state else "Open"
         if self.device_class == "lock":
