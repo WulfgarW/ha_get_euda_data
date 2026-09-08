@@ -436,6 +436,20 @@ EUDA_DATA_DICT = {
         "key": "bd917b58-82bd-3c34-a006-747ca5aec03d",
         "conversion": EUDA_DATA_CONVERSION_BOOL,
     },
+    "lock_state_2": {
+        "attr": "doors_locked_text",
+        "name": "Doors locked text",
+        "icon": "mdi:car",
+        "key": "60bc0937-f5a7-3809-9535-9a7942e5dd94",
+        "conversion": None,
+    },
+    "locked_2": {
+        "attr": "doors_all_locked_text",
+        "name": "Doors all locked text",
+        "icon": "mdi:car",
+        "key": "bd917b58-82bd-3c34-a006-747ca5aec03d",
+        "conversion": None,
+    },
     "locked_state_front_left_door": {
         "attr": "door_locked_left_front",
         "name": "Door locked left front",
@@ -654,7 +668,7 @@ EUDA_DATA_DICT = {
         "unit": "kW",
         "device_class": "power",
         "key": "978be4ed-2f7f-32c0-8644-18e7b0dde741",
-        "conversion": EUDA_DATA_CONVERSION_FLOAT,
+        "conversion": EUDA_DATA_CONVERSION_DIVIDE_BY_10,
     },
     "battery_state_report.charge_power": {
         "attr": "charge_power",
