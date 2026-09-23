@@ -55,8 +55,12 @@ class PyCupraBinarySensor(PyCupraEntity, BinarySensorEntity):
         """Return True if the binary sensor is on."""
         newState = self.instrument.is_on
         if newState is None:
-            _LOGGER.debug(f"New value of binary_sensor {self.instrument.attr} is None. Keeping old value {self._attr_is_on}.")
-            return self._attr_is_on
+            if not self.instrument.is_supported:
+                _LOGGER.debug(f"Instrument.is_supported is False for {self.instrument.attr}. Returning None for binary_sensor.is_on.")
+                return newState
+            else:
+                _LOGGER.debug(f"New value of binary_sensor {self.instrument.attr} is None. Keeping old value {self._attr_is_on}.")
+                return self._attr_is_on
         # Invert state for lock/window/door to get HA to display correctly
         if self.instrument.device_class in ["lock", "door", "window"]:
             return not newState
@@ -68,3 +72,12 @@ class PyCupraBinarySensor(PyCupraEntity, BinarySensorEntity):
         if self.instrument.device_class in DEVICE_CLASSES:
             return self.instrument.device_class
         return None
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        if not self.instrument.is_supported:
+            _LOGGER.debug(f"In binary_sensor.available for {self.instrument.attr}. Returning False")
+            return False
+        return True
+        #return super().available and self.identifier in self.coordinator.data

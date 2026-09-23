@@ -42,8 +42,8 @@ from .const import (
     DATA_DIRECTORY,
     AUTH_OIDCONFIG,
     EUDA_CLIENT_LIST,
-    # EUDA_AUTH_OIDC,
-    # EUDA_AUTH_ISSUER,
+    #EUDA_AUTH_OIDC,
+    #EUDA_AUTH_ISSUER,
     EUDA_HEADERS_AUTH,
     EUDA_HEADERS_SESSION,
     EUDA_BASE_URL,
@@ -386,8 +386,9 @@ class EUDAConnection:
             self._clear_cookies()
 
             req = await self._session.get(
-                url=location, headers=self._session_auth_headers, allow_redirects=False
+                url=location, headers=self._session_auth_headers, allow_redirects=False, 
             )
+            self._session_cookies.update(req.cookies)
             if req.headers.get("Location", False):
                 ref = req.headers.get("Location", "")
                 if "error" in ref:
@@ -409,10 +410,6 @@ class EUDAConnection:
                         allow_redirects=False,
                     )
             # Update cookie jar
-            # if self._session_cookies != '':
-            #    self._session_cookies.update(req.cookies)
-            # else:
-            #    self._session_cookies = req.cookies
             self._session_cookies.update(req.cookies)
 
             if req.headers.get("Location", False):
@@ -774,11 +771,6 @@ class EUDAConnection:
         ) as response:
             response.raise_for_status()
 
-            # Update cookie jar
-            # if self._session_cookies != '':
-            #    self._session_cookies.update(response.cookies)
-            # else:
-            #    self._session_cookies = response.cookies
             self._session_cookies.update(response.cookies)
             res: Any = {}
 
@@ -892,7 +884,6 @@ class EUDAConnection:
     async def checkPermission(self, baseurl: str, vin: str = "") -> bool:
         try:
             url = EUDA_API_TOKEN.format(baseurl=EUDA_BASE_URL)
-            # response = await self.get(url)
             response = await self._session._request(
                 method=METH_GET,
                 str_or_url=url,
@@ -904,7 +895,6 @@ class EUDAConnection:
                 raise PyCupraException("http.get to fetch token.json failed")
 
             url = EUDA_API_PERMISSION_CHECK.format(baseurl=EUDA_BASE_URL)
-            # response = await self.get(url)
             response = await self._session._request(
                 method=METH_GET,
                 str_or_url=url,
@@ -935,8 +925,6 @@ class EUDAConnection:
         """Get the vehicles for the account that is logged in."""
         data = {}
         try:
-            # if not await self.checkPermission(baseurl):
-            #    raise 'Permission check failed'
             response = await self.get(
                 EUDA_API_VEHICLES.format(baseurl=EUDA_BASE_URL, viewPos="FRONT_LEFT")
             )
@@ -1371,7 +1359,6 @@ class EUDAConnection:
         try:
             if fileObj.path.find(".zip") > 0:
                 # fileObj is a zip file
-                #dataFromFile, fileName = await self.readZipFile(fileObj)
                 loop = asyncio.get_running_loop()
                 dataFromFile, fileName = await loop.run_in_executor(
                     None,
@@ -1379,7 +1366,7 @@ class EUDAConnection:
                     fileObj,
                 )
             else:
-                #dataFromFile, fileName = await self.readDataFile(fileObj)
+                # fileObj is not a zip file
                 loop = asyncio.get_running_loop()
                 dataFromFile, fileName = await loop.run_in_executor(
                     None,
@@ -1803,7 +1790,7 @@ class EUDAConnection:
                                 )
                                 counter = counter + 1
                             if len(fileContent) > 0:
-                                loop = asyncio.get_running_loop()
+                                #loop = asyncio.get_running_loop()
                                 if fileName.find("_error") > 0:
                                     # There is an error file on the portal
                                     fileWithPath = os.path.join(
@@ -1864,13 +1851,6 @@ class EUDAConnection:
             ),
             None,
         )
-
-    # def hash_spin(self, challenge, spin) -> str:
-    #    """Convert SPIN and challenge to hash."""
-    #    spinArray = bytearray.fromhex(spin);
-    #    byteChallenge = bytearray.fromhex(challenge);
-    #    spinArray.extend(byteChallenge)
-    #    return hashlib.sha512(spinArray).hexdigest()
 
     def addToAnonymisationDict(self, keyword: str, replacement: str) -> None:
         self._anonymisationDict[keyword] = replacement

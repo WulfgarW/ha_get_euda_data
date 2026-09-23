@@ -35,23 +35,23 @@ EUDA_CLIENT_LIST = {
 
 EUDA_HEADERS_SESSION = {
     "Connection": "keep-alive",
-    "Content-Type": "*/*",  #'application/json',
+    "Content-Type": "application/json", #"*/*",  
     "Accept-charset": "UTF-8",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
     "Referer": "https://eu-data-act.drivesomethinggreater.com/de/en/user.html",
     #'User-ID': '?????', # to be set later
     "Accept-Encoding": "gzip, deflate, br, zstd",
-    "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
+    "Accept-Language": "de,en-US;q=0.9,en;q=0.8",
 }
 
 EUDA_HEADERS_AUTH = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
     "Referer": "https://eu-data-act.drivesomethinggreater.com/de/en/login.html",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
 }
 
 # Urls for EUDA connection
