@@ -45,6 +45,7 @@ from .get_euda_data.exceptions import (
     PyCupraLoginFailedException,
     PyCupraInvalidRequestException,
     PyCupraRequestInProgressException,
+    PyCupraReadTripStatisticsFileException,
 )
 
 from .const import (
@@ -95,6 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         PyCupraAuthenticationException,
         PyCupraAccountLockedException,
         PyCupraLoginFailedException,
+        PyCupraReadTripStatisticsFileException,
     ) as e:
         _LOGGER.debug(f"In async_setup_entry. Exception {e}")
         raise ConfigEntryAuthFailed(e) from e
@@ -117,7 +119,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         else:
             identifiers = None
         registry = device_registry.async_get(hass)
-        device = registry.async_get_device(identifiers)
+        device = registry.async_get_device_by_identifier(identifiers, DOMAIN)
         # Get user configured name for device
         if device is not None:
             name = device.name_by_user if device.name_by_user is not None else None
@@ -485,7 +487,7 @@ class PyCupraCoordinator(DataUpdateCoordinator):
                 f"Config entry for logPrefix='{self._logPrefix}'. Treating it as None."
             )
             self._logPrefix = None
-        _LOGGER.debug(f"In PyCupraCoord.Init: logPrefix={self._logPrefix}")
+        _LOGGER.debug(f"In PyCupraCoordinator.Init: logPrefix={self._logPrefix}")
         
         self.eudaConnection = EUDAConnection(
             session=async_create_clientsession(hass),
@@ -564,6 +566,16 @@ class PyCupraCoordinator(DataUpdateCoordinator):
             _LOGGER.error("In async_login.except. Exception:", e)
             # Raise auth failed error in config flow
             raise
+        except (PyCupraReadTripStatisticsFileException) as e:
+            _LOGGER.error("In async_login.except. Exception:", e)
+            async_show_pycupra_notification(
+                self.hass,
+                f"An error occurred while reading trip statistics file. Error: {e}. If you think, it should work again, reload your Get EUDA Data device.",
+                title="EUDA connection failed",
+                id="PyCupra_euda_error",
+            )
+            # Raise read trip statistics file exception
+            raise
         except Exception:
             raise
 
@@ -586,7 +598,7 @@ class PyCupraCoordinator(DataUpdateCoordinator):
                             )
                             async_show_pycupra_notification(
                                 self.hass,
-                                f"An error occurred in update of EU data act data. Error: {self.eudaConnection._loginError}. If you think, it should work again, reload your PyCupra device.",
+                                f"An error occurred in update of EU data act data. Error: {self.eudaConnection._loginError}. If you think, it should work again, reload your Get EUDA Data device.",
                                 title="EUDA connection failed",
                                 id="PyCupra_euda_error",
                             )
@@ -596,7 +608,7 @@ class PyCupraCoordinator(DataUpdateCoordinator):
                         )
                         async_show_pycupra_notification(
                             self.hass,
-                            f"An error occurred in update of EU data act data. Error: {self.eudaConnection._loginError}. If you think, it should work again, reload your PyCupra device.",
+                            f"An error occurred in update of EU data act data. Error: {self.eudaConnection._loginError}. If you think, it should work again, reload your Get EUDA Data device.",
                             title="EUDA connection failed",
                             id="PyCupra_euda_error",
                         )
@@ -635,5 +647,5 @@ async def async_sleep_and_dismiss_pycupra_notification(
     await asyncio.sleep(120)
     global COUNTER_FOR_PERSISTENT_NOTIFICATIONS
     if counter == COUNTER_FOR_PERSISTENT_NOTIFICATIONS:
-        _LOGGER.debug("Dismissing open pycupra notification")
+        _LOGGER.debug("Dismissing open Get EUDA Data notification")
         async_pn_dismiss(hass, notification_id=id)

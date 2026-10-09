@@ -31,7 +31,8 @@ from .exceptions import (
     PyCupraInvalidRequestException,
     PyCupraMarketingConsentException,
     # PyCupraRequestInProgressException,
-    # PyCupraServiceUnavailable
+    # PyCupraServiceUnavailable,
+    PyCupraReadTripStatisticsFileException
 )
 
 from aiohttp import ClientSession, ClientTimeout
@@ -1604,7 +1605,7 @@ class EUDAConnection:
             self._LOGGER.error(
                 f"Error while reading trip statistics file. Error: {error}."
             )
-            raise PyCupraException("Error while trying to read trip statistics file")
+            raise PyCupraReadTripStatisticsFileException("Error while trying to read trip statistics file")
         return False
 
     def writeTripStatisticsFile(self, vin: str | None = None) -> bool:
