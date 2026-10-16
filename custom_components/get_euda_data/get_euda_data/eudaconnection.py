@@ -645,7 +645,25 @@ class EUDAConnection:
 
     # HTTP methods to API
     async def get(self, url: str, vin="") -> Any:
-        """Perform a HTTP GET."""
+        """Call getWithRelogin(). If getWithRelogin() returns, that a relogin was necessary and did succeed, then redo the call of getWithRelogin() once"""
+        try:
+            response = await self.getWithRelogin(url, vin)
+            if isinstance(response, dict):
+                if response.get("status_code", 0) in (401, 403) and not self._error401 and not self._error403:
+                    # getWithRelogin() got a status code of 401 or 403 and performed a successful relogin
+                    # Therefore, the http request is called again
+                    response2 = await self.getWithRelogin(url, vin)
+                    if isinstance(response2, dict):
+                        if response2.get("status_code", 0)==0:
+                            # Second try of the http request succeeded
+                            return response2
+            return response
+        except Exception as e:
+            self._LOGGER.debug(f"Got non HTTP related error in get: {e}")
+            return {"error_description": "Non HTTP related error in get"}
+
+    async def getWithRelogin(self, url: str, vin="") -> Any:
+        """Perform a HTTP GET. If it fails with status 401 or 403, then call authorize()"""
         try:
             response = await self._request(METH_GET, url)
             return response
@@ -884,6 +902,7 @@ class EUDAConnection:
 
     async def checkPermission(self, baseurl: str, vin: str = "") -> bool:
         try:
+            return True #checkPermission always returns True, in order to reduce the number of http requests
             url = EUDA_API_TOKEN.format(baseurl=EUDA_BASE_URL)
             response = await self._session._request(
                 method=METH_GET,
@@ -1701,7 +1720,8 @@ class EUDAConnection:
     async def getDataForOneVehicle(self, vehicle: EUDAVehicle) -> bool:
         """ "Reads data like file lists and files for one vehicle from the EUDA portal"""
         try:
-            # Reading information for data cluster 'all' (although not using it at the moment)
+            # As only the data cluster 'partial' is needed for Get_EUDA_Data, this section has been commented out
+            """# Reading information for data cluster 'all' (although not using it at the moment)
             await asyncio.sleep(2)
             data = await self.getDatacluster(EUDA_BASE_URL, vehicle.vin, "all")
             if data == {}:
@@ -1715,7 +1735,7 @@ class EUDAConnection:
                         f"Found data cluster of type 'all'. Name={vehicle._states.get('all', {}).get('Name', '')}"
                     )
                 )
-                # identifier_all=vehicle._states['all'].get('Identifier','')
+                # identifier_all=vehicle._states['all'].get('Identifier','')"""
 
             # Reading information for data cluster 'partial'
             identifier_partial = ""
