@@ -360,6 +360,16 @@ EUDA_DATA_DICT = {
         "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47",
         "conversion": EUDA_DATA_CONVERSION_INT,
     },
+    "mileage_value_2": {
+        "attr": "distance_value2",
+        "name": "Odometer value2",
+        "icon": "mdi:speedometer",
+        "unit": "km",
+        "device_class": "distance",
+        "key": "75d65f00-5fa8-334a-826d-e73e91fe5c8d",
+        "unit_key": "aefcb497-c0eb-39d0-8a91-2b728fcb2b47", # not sure, if this is the correct unit key for this field key
+        "conversion": EUDA_DATA_CONVERSION_INT,
+    },
     "cruising_range_electric": {
         "attr": "electric_range",
         "name": "Electric range",
