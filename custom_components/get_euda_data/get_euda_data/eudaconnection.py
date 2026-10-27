@@ -44,7 +44,7 @@ from .const import (
     AUTH_OIDCONFIG,
     EUDA_CLIENT_LIST,
     #EUDA_AUTH_OIDC,
-    #EUDA_AUTH_ISSUER,
+    EUDA_AUTH_ISSUER,
     EUDA_HEADERS_AUTH,
     EUDA_HEADERS_SESSION,
     EUDA_BASE_URL,
@@ -208,7 +208,7 @@ class EUDAConnection:
                 return False
             response_data = await req.json()
             self._LOGGER.debug(
-                f"Get request to {AUTH_OIDCONFIG} was not successful. Response data: {response_data}"
+                f"Get request to {AUTH_OIDCONFIG} was successful. Response data: {response_data}"
             )
             auth_issuer = response_data["issuer"]
             auth_oidc = response_data["authorization_endpoint"]
@@ -239,6 +239,9 @@ class EUDAConnection:
             )
             if req.headers.get("Location", False):
                 ref = req.headers.get("Location", "")
+                if ref.startswith("/u/login"):
+                    # if location is missing the domain
+                    ref = EUDA_AUTH_ISSUER + ref
                 if "error" in ref:
                     error = parse_qs(urlparse(ref).query).get("error", "")[0]
                     if "error_description" in ref:
@@ -285,7 +288,7 @@ class EUDAConnection:
                 loginInProgress = False
                 return False
             # If we need to sign in
-            if "signin-service" in ref:
+            if True: #"signin-service" in ref:
                 self._LOGGER.debug("Got redirect to signin-service")
                 # location = await self._signin_service(req, EUDA_AUTH_ISSUER, EUDA_AUTH_OIDC)
                 location = await self._signin_service(
@@ -301,6 +304,8 @@ class EUDAConnection:
                 while not location.startswith(EUDA_CLIENT_LIST[client]["REDIRECT_URL"]):
                     if location is None:
                         raise PyCupraException("Login failed")
+                    if location.startswith("/"):
+                        location = EUDA_AUTH_ISSUER + location
                     if "error" in location:
                         errorTxt = parse_qs(urlparse(location).query).get("error", "")[
                             0
@@ -511,6 +516,54 @@ class EUDAConnection:
         loginInProgress = False
         return True
 
+    async def _signin_service_seat(
+        self,
+        html: aiohttp.ClientResponse,
+        authissuer: str,
+        authorizationEndpoint: str,
+        client: str,
+    ) -> Any:
+        """Method to signin to Connect portal."""
+        # Extract login form and extract attributes
+        try:
+            response_data = await html.text()
+            responseSoup = BeautifulSoup(response_data, "html.parser")
+            form_data = dict()
+            if responseSoup is None:
+                raise PyCupraLoginFailedException(
+                    "Login failed, server did not return a login form"
+                )
+            pageElement: Any = responseSoup.find("form") #class="c92935a96 c35432a7f")
+            for t in pageElement.find_all("input", type="hidden"):
+                if self._session_fulldebug:
+                    self._LOGGER.debug(
+                        f"Extracted form attribute: {t['name'], t['value']}"
+                    )
+                form_data[t["name"]] = t["value"]
+            form_data["username"] = self._session_auth_username
+            form_data["password"] = self._session_auth_password
+            pe_url =html.url.human_repr()
+
+        except Exception as e:
+            self._LOGGER.error(f"Failed to extract user login form. Error: {e}")
+            raise
+
+        # POST email
+        self._session_auth_headers["Referer"] = EUDA_BASE_URL #authorizationEndpoint
+        self._session_auth_headers["Origin"] = authissuer
+        self._LOGGER.debug(
+            self.anonymise(
+                f"Start authorization for user {self._session_auth_username}"
+            )
+        )
+        req = await self._session.post(
+            url=pe_url, headers=self._session_auth_headers, data=form_data,
+            allow_redirects=False,
+        )
+        #if req.status != 200:
+        #    raise PyCupraException("Authorization request failed")
+        return req.headers.get("Location", None)
+
     async def _signin_service(
         self,
         html: aiohttp.ClientResponse,
@@ -529,6 +582,10 @@ class EUDAConnection:
                     "Login failed, server did not return a login form"
                 )
             pageElement: Any = responseSoup.find("form", id="emailPasswordForm")
+            if pageElement is None and self._session_auth_brand in ("cupra", "seat"):
+                self._LOGGER.debug("Could not find emailPasswordForm. Try new signin for Seat/Cupra")
+                return await self._signin_service_seat(html, authissuer, authorizationEndpoint, client)
+
             for t in pageElement.find_all("input", type="hidden"):
                 if self._session_fulldebug:
                     self._LOGGER.debug(
