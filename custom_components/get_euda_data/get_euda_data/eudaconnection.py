@@ -15,7 +15,7 @@ import csv
 
 from sys import version_info, argv
 from datetime import timedelta, datetime, timezone
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, urljoin
 import aiohttp
 from bs4 import BeautifulSoup, ResultSet
 from .utilities import json_loads
@@ -394,77 +394,41 @@ class EUDAConnection:
             self._LOGGER.debug("Following call back to get authorisation cookies.")
             self._clear_cookies()
 
-            req = await self._session.get(
-                url=location, headers=self._session_auth_headers, allow_redirects=False, 
-            )
-            self._session_cookies.update(req.cookies)
-            if req.headers.get("Location", False):
-                ref = req.headers.get("Location", "")
+            # Walk through the redirects of the EU Data Act portal (e.g. /login -> /services/callbacklogin -> ... -> user.html).
+            # The number of hops is not fixed (e.g. the portal moved domains in 11/2026 which added hops), so follow them in a loop.
+            url = location
+            maxCallbackRedirects = 10
+            while True:
+                req = await self._session.get(
+                    url=url,
+                    headers=self._session_auth_headers,
+                    allow_redirects=False,
+                )
+                self._session_cookies.update(req.cookies)
+                ref = req.headers.get("Location", None)
+                if not ref:
+                    break
                 if "error" in ref:
-                    error = parse_qs(urlparse(ref).query).get("error", "")[0]
-                    if "error_description" in ref:
-                        error = parse_qs(urlparse(ref).query).get(
-                            "error_description", ""
-                        )[0]
+                    query = parse_qs(urlparse(ref).query)
+                    error = query.get("error", [""])[0]
+                    if "error_description" in query:
+                        error = query.get("error_description", [""])[0]
                         self._LOGGER.info(f"Unable to login, {error}")
                     else:
                         self._LOGGER.info("Unable to login.")
                     loginInProgress = False
                     raise PyCupraException(error)
-                else:
-                    if self._session_fulldebug:
-                        self._LOGGER.debug(f'Got url: "{ref}"')
-                    req = await self._session.get(
-                        url=ref,
-                        headers=self._session_auth_headers,
-                        allow_redirects=False,
+                # Location may be relative, so resolve it against the current URL
+                url = urljoin(str(req.url), ref)
+                if self._session_fulldebug:
+                    self._LOGGER.debug(self.anonymise(f'Got url: "{url}"'))
+                maxCallbackRedirects -= 1
+                if maxCallbackRedirects == 0:
+                    self._LOGGER.debug(
+                        f"Too many redirects while following callback. Last response: {req}"
                     )
-            # Update cookie jar
-            self._session_cookies.update(req.cookies)
-
-            if req.headers.get("Location", False):
-                ref = req.headers.get("Location", "")
-                if "error" in ref:
-                    error = parse_qs(urlparse(ref).query).get("error", "")[0]
-                    if "error_description" in ref:
-                        error = parse_qs(urlparse(ref).query).get(
-                            "error_description", ""
-                        )[0]
-                        self._LOGGER.info(f"Unable to login, {error}")
-                    else:
-                        self._LOGGER.info("Unable to login.")
                     loginInProgress = False
-                    raise PyCupraException(error)
-                else:
-                    if self._session_fulldebug:
-                        self._LOGGER.debug(f'Got url: "{ref}"')
-                    req = await self._session.get(
-                        url=ref,
-                        headers=self._session_auth_headers,
-                        allow_redirects=False,
-                    )
-
-            if req.headers.get("Location", False):
-                ref = req.headers.get("Location", "")
-                if "error" in ref:
-                    error = parse_qs(urlparse(ref).query).get("error", "")[0]
-                    if "error_description" in ref:
-                        error = parse_qs(urlparse(ref).query).get(
-                            "error_description", ""
-                        )[0]
-                        self._LOGGER.info(f"Unable to login, {error}")
-                    else:
-                        self._LOGGER.info("Unable to login.")
-                    loginInProgress = False
-                    raise PyCupraException(error)
-                else:
-                    if self._session_fulldebug:
-                        self._LOGGER.debug(f'Got url: "{ref}"')
-                    req = await self._session.get(
-                        url=ref,
-                        headers=self._session_auth_headers,
-                        allow_redirects=False,
-                    )
+                    return False
 
             if req.status != 200:
                 self._LOGGER.debug(
@@ -472,6 +436,7 @@ class EUDAConnection:
                 )
                 loginInProgress = False
                 return False
+            self._LOGGER.debug(f"Walking through redirects ended at {req.url}")
         except PyCupraEULAException:
             self._LOGGER.warning(
                 'Login failed, the terms and conditions might have been updated and need to be accepted. Login to  your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/" and accept the new terms before trying again'

@@ -9,27 +9,27 @@ EUDA_CLIENT_LIST = {
     "cupra": {
         "CLIENT_ID": "f85e5b69-e3b2-43aa-9c0d-1b7d0e0b576f@apps_vw-dilab_com",
         "SCOPE": "openid profile cars",
-        "REDIRECT_URL": "https://eu-data-act.drivesomethinggreater.com/login",
+        "REDIRECT_URL": "https://eu-data-act.vwgroup-datahub.com/login",
     },
     "seat": {
         "CLIENT_ID": "f85e5b69-e3b2-43aa-9c0d-1b7d0e0b576f@apps_vw-dilab_com",
         "SCOPE": "openid profile cars",
-        "REDIRECT_URL": "https://eu-data-act.drivesomethinggreater.com/login",
+        "REDIRECT_URL": "https://eu-data-act.vwgroup-datahub.com/login",
     },
     "audi": {
         "CLIENT_ID": "cc29b87a-5e9a-4362-aecf-5adea6b01bbb@apps_vw-dilab_com",
         "SCOPE": "openid profile cars",
-        "REDIRECT_URL": "https://eu-data-act.drivesomethinggreater.com/login",
+        "REDIRECT_URL": "https://eu-data-act.vwgroup-datahub.com/login",
     },
     "skoda": {
         "CLIENT_ID": "3ea88bf9-1d4e-4a68-b3ad-4098c1f1d246@apps_vw-dilab_com",
         "SCOPE": "openid profile cars",
-        "REDIRECT_URL": "https://eu-data-act.drivesomethinggreater.com/login",
+        "REDIRECT_URL": "https://eu-data-act.vwgroup-datahub.com/login",
     },
     "volkswagen_passenger_cars": {
         "CLIENT_ID": "9b58543e-1c15-4193-91d5-8a14145bebb0@apps_vw-dilab_com",
         "SCOPE": "openid profile cars",
-        "REDIRECT_URL": "https://eu-data-act.drivesomethinggreater.com/login",
+        "REDIRECT_URL": "https://eu-data-act.vwgroup-datahub.com/login",
     },
 }
 
@@ -39,7 +39,7 @@ EUDA_HEADERS_SESSION = {
     "Accept-charset": "UTF-8",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
-    "Referer": "https://eu-data-act.drivesomethinggreater.com/de/en/user.html",
+    "Referer": "https://eu-data-act.vwgroup-datahub.com/de/en/user.html",
     #'User-ID': '?????', # to be set later
     "Accept-Encoding": "gzip, deflate, br, zstd",
     "Accept-Language": "de,en-US;q=0.9,en;q=0.8",
@@ -50,7 +50,7 @@ EUDA_HEADERS_AUTH = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
-    "Referer": "https://eu-data-act.drivesomethinggreater.com/de/en/login.html",
+    "Referer": "https://eu-data-act.vwgroup-datahub.com/de/en/login.html",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
 }
 
@@ -58,7 +58,7 @@ EUDA_HEADERS_AUTH = {
 EUDA_AUTH_OIDC = "https://identity.vwgroup.io/oidc/v1/authorize"  # Authorization endpoint for EUDA login
 EUDA_AUTH_ISSUER = "https://identity.vwgroup.io"  # Authorization issuer for EUDA login
 
-EUDA_BASE_URL = "https://eu-data-act.drivesomethinggreater.com"
+EUDA_BASE_URL = "https://eu-data-act.vwgroup-datahub.com"
 EUDA_API_VEHICLES = "{baseurl}/proxy_api/consent/me/vehicles?viewPosition={viewPos}"  # Endpoint to get vehicles
 EUDA_API_FILE_DOWNLOAD = "{baseurl}/proxy_api/euda-apim/datadelivery/vehicles/{vin}/{id}/download"  # Endpoint to download a data file
 EUDA_API_FILE_LIST = "{baseurl}/proxy_api/euda-apim/datadelivery/vehicles/{vin}/{id}/list"  # Endpoint to read a list of available files
