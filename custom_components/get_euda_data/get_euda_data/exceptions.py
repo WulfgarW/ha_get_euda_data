@@ -105,6 +105,7 @@ class PyCupraEUDAPermissionExpiredException(Exception):
         super(PyCupraEUDAPermissionExpiredException, self).__init__(status)
         self.status = status
 
+
 class PyCupraReadTripStatisticsFileException(Exception):
     """Raised when reading the trip statistics file fails with unknown reason"""
 
@@ -112,4 +113,3 @@ class PyCupraReadTripStatisticsFileException(Exception):
         """Initialize exception"""
         super(PyCupraReadTripStatisticsFileException, self).__init__(status)
         self.status = status
-

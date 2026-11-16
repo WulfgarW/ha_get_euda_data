@@ -177,7 +177,7 @@ class PyCupraConnectConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL
                     ): vol.All(
-                        vol.Coerce(int), vol.Range(min=MIN_SCAN_INTERVAL, max=900)
+                        vol.Coerce(int), vol.Range(min=MIN_SCAN_INTERVAL, max=1200)
                     ),
                     vol.Optional(
                         CONF_LOGPREFIX,
@@ -488,7 +488,7 @@ class PyCupraConnectOptionsFlowHandler(config_entries.OptionsFlow):
                             ),
                         ),
                     ): vol.All(
-                        vol.Coerce(int), vol.Range(min=MIN_SCAN_INTERVAL, max=900)
+                        vol.Coerce(int), vol.Range(min=MIN_SCAN_INTERVAL, max=1200)
                     ),
                     vol.Optional(
                         CONF_DEBUG,

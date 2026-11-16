@@ -27,10 +27,10 @@ This integration will only work for your car(s), if you have done the necessary 
 ## Preparations to get EU Data Act data for your vehicle
 
 ### Login the EU Data Act portal
-- Open https://eu-data-act.drivesomethinggreater.com in your browser.
+- Open https://eu-data-act.vwgroup-datahub.com in your browser.
 - Click on the green "Log in" button.
 - Now choose your brand and click "Login" and then "Continue" on the follwoing page.
-- You will be redirected to the login page of Seat (yes also for Cupra users) and login there.
+- You will be redirected to the login page of your vehcile's brand. Please login there.
 
 ### Choose your vehicle, allow access and set up a customised data request
 - After a successful login, you will be redirected back to the EU Data Act portal.
