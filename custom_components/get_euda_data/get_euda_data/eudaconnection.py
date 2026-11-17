@@ -350,19 +350,14 @@ class EUDAConnection:
                         self._loginError = f"Login failed: {errorTxt}"
                         raise PyCupraLoginFailedException(errorTxt)
                     if "terms-and-conditions" in location:
-                        self._loginError = 'The terms and conditions must be accepted first at your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/"'
+                        self._loginError = 'The terms and conditions must be accepted first at your local brand site, e.g. "https://cupraid.vwgroup.io/"'
                         raise PyCupraEULAException(
-                            'The terms and conditions must be accepted first at your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/"'
+                            'The terms and conditions must be accepted first at your local brand site, e.g. "https://cupraid.vwgroup.io/"'
                         )
                     if "consent/marketing" in location:
-                        self._loginError = 'The question to consent to marketing must be answered first at your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/"'
+                        self._loginError = 'The question to consent to marketing must be answered first at your local brand site, e.g. "https://cupraid.vwgroup.io/"'
                         raise PyCupraMarketingConsentException(
-                            'The question to consent to marketing must be answered first at your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/"'
-                        )
-                    if "consent" in location:
-                        self._loginError = 'You have to allow the EUDA portal the access to some of your data first at your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/"'
-                        raise PyCupraEULAException(
-                            'You have to allow the EUDA portal the access to some of your data first at your local SEAT/Cupra site, e.g. "https://cupraid.vwgroup.io/"'
+                            'The question to consent to marketing must be answered first at your local brand site, e.g. "https://cupraid.vwgroup.io/"'
                         )
                     if (
                         "user_id" in location
@@ -383,6 +378,12 @@ class EUDAConnection:
                         headers=self._session_auth_headers,
                         allow_redirects=False,
                     )
+                    # The brands have different ways to check and express a missing consent. To avoid possible malfunctions this check is disabled for now.
+                    #if "consent" in location and response.status==200:
+                    #    self._loginError = 'You have to allow the EUDA portal the access to some of your data first at your local brand site, e.g. "https://cupraid.vwgroup.io/"'
+                    #    raise PyCupraEULAException(
+                    #        'You have to allow the EUDA portal the access to some of your data first at your local brand site, e.g. "https://cupraid.vwgroup.io/"'
+                    #    )
                     if response.headers.get("Location", False) is False:
                         self._LOGGER.debug(f"Unexpected response: {await req.text()}")
                         raise PyCupraAuthenticationException(
