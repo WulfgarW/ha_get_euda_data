@@ -24,6 +24,12 @@ from .const import (
     DOMAIN,
     # DEFAULT_DEBUG
 )
+from .get_euda_data.exceptions import (
+    PyCupraAuthenticationException,
+    PyCupraAccountLockedException,
+    PyCupraLoginFailedException,
+)
+
 from typing import Any, Mapping
 
 _LOGGER = logging.getLogger(__name__)
@@ -289,9 +295,16 @@ class PyCupraConnectConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         self._get_reauth_entry(),
                         data_updates=user_input,
                     )
+            except (
+                PyCupraAuthenticationException,
+                PyCupraAccountLockedException,
+                PyCupraLoginFailedException,
+            ) as e:
+                _LOGGER.debug(f"In async_step_reauth_confirm. Exception {e}")
+                _LOGGER.debug("Will reopen form.")
             except Exception as e:
                 _LOGGER.error("Failed to login due to error: %s", str(e))
-                return self.async_abort(reason="Failed to connect to Connect")
+                return self.async_abort(reason="Failed to connect to EUDA portal")
 
         brand_values = ["audi", "cupra", "seat", "skoda", "volkswagen_passenger_cars"]
         return self.async_show_form(
